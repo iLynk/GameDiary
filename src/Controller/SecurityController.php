@@ -11,7 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-
+use App\Security\AppAuthenticator;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+ 
 class SecurityController extends AbstractController
 {
 
@@ -20,8 +22,13 @@ class SecurityController extends AbstractController
                             EntityManagerInterface $em, 
                             User $user,
                             UserPasswordHasherInterface $hasher, 
+                            UserAuthenticatorInterface $userAuthenticator, 
+                            AppAuthenticator $authenticator,
                             ): Response
     {
+        if($this->getUser()){
+            return $this->redirectToRoute('app_home');
+        }
         // on crée le formulaire via la class UserType 
         $form = $this->createForm(UserType::class, $user);
         // on récupère la reponse envoyé depuis le navigateur
@@ -34,12 +41,14 @@ class SecurityController extends AbstractController
             // on enregistre l'utilisateur
             $em->persist($user);
             $em->flush();
- 
-            // connecter le user?
-
+             
             // on retourne vers l'accueil avec un petit message de succès 
             $this->addFlash('success', 'Merci de vous être enregistré');
-            return $this->redirectToRoute('app_login');
+            return $userAuthenticator->authenticateUser(
+                $user,
+                $authenticator,
+                $request
+            );
         }
         // on envoie le formulaire d'inscription à la vue
         return $this->render('security/register.html.twig', ['form' => $form]);
