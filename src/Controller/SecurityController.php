@@ -13,20 +13,21 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use App\Security\AppAuthenticator;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
- 
+
 class SecurityController extends AbstractController
 {
 
     #[Route(path: '/register', name: 'app_register')]
-    public function register(Request $request,
-                            EntityManagerInterface $em, 
-                            User $user,
-                            UserPasswordHasherInterface $hasher, 
-                            UserAuthenticatorInterface $userAuthenticator, 
-                            AppAuthenticator $authenticator,
-                            ): Response
-    {
-        if($this->getUser()){
+    public function register(
+        Request $request,
+        EntityManagerInterface $em,
+        User $user,
+        UserPasswordHasherInterface $hasher,
+        UserAuthenticatorInterface $userAuthenticator,
+        AppAuthenticator $authenticator,
+    ): Response {
+        // si l'utilisateur est connecté, on le renvoit vers la page d'accueil
+        if ($this->getUser()) {
             return $this->redirectToRoute('app_home');
         }
         // on crée le formulaire via la class UserType 
@@ -34,15 +35,14 @@ class SecurityController extends AbstractController
         // on récupère la reponse envoyé depuis le navigateur
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             // on hache le password et on ajoute le role user
             $user->setPassword($hasher->hashPassword($user, $user->getPassword()))
                 ->setRoles(['user']);
             // on enregistre l'utilisateur
             $em->persist($user);
             $em->flush();
-             
-            // on retourne vers l'accueil avec un petit message de succès 
+
+            // on ajoute un message de succès et on connecte l'utilisateur 
             $this->addFlash('success', 'Merci de vous être enregistré');
             return $userAuthenticator->authenticateUser(
                 $user,
@@ -57,13 +57,14 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
+        // si l'utilisateur est connecté, on le renvoit vers la page d'accueil
         if ($this->getUser()) {
             return $this->redirectToRoute('app_home');
         }
 
-        // get the login error if there is one
+        // on récupère les erreurs s'il y en a
         $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
+        // on récupère le dernier 
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
