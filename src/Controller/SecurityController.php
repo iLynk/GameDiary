@@ -30,7 +30,7 @@ class SecurityController extends AbstractController
         if ($this->getUser()) {
             return $this->redirectToRoute('app_home');
         }
-        // on crée le formulaire via la class UserType 
+        // on crée le formulaire via notre form UserType 
         $form = $this->createForm(UserType::class, $user);
         // on récupère la reponse envoyé depuis le navigateur
         $form->handleRequest($request);
