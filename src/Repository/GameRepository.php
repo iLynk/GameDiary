@@ -16,6 +16,16 @@ class GameRepository extends ServiceEntityRepository
         parent::__construct($registry, Game::class);
     }
 
+    // fonction pour récupérer tous les ApiId
+    public function findAllApiId(): array
+    {
+        return $this->createQueryBuilder('g')
+            ->select('g.apiId')
+            ->orderBy('g.apiId', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     //    /**
     //     * @return Game[] Returns an array of Game objects
     //     */

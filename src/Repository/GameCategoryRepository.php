@@ -16,6 +16,16 @@ class GameCategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, GameCategory::class);
     }
 
+    // fonction pour récupérer tous les ApiId
+    public function findAllApiId(): array
+    {
+        return $this->createQueryBuilder('gc')
+            ->select('gc.apiId')
+            ->orderBy('gc.apiId', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     //    /**
     //     * @return GameCategory[] Returns an array of GameCategory objects
     //     */
@@ -40,4 +50,6 @@ class GameCategoryRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
 }

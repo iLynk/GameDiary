@@ -12,34 +12,33 @@ class ApiTokenService
     private $httpClient;
     private $clientId;
     private $clientSecret;
-    private $apiUrl;
-
-    public function __construct(EntityManagerInterface $entityManager, HttpClientInterface $httpClient, string $clientId, string $clientSecret, string $apiUrl)
+    public function __construct(EntityManagerInterface $entityManager, HttpClientInterface $httpClient, string $clientId, string $clientSecret)
     {
         $this->entityManager = $entityManager;
         $this->httpClient = $httpClient;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        $this->apiUrl = $apiUrl;
     }
 
+    // FONCTION POUR RECUPERER LE TOKEN VALIDE
     public function getToken(): string
     {
-        // Check if token exists and is valid
+        // On regarde s'il existe un token valide en BDD
         $tokenRepo = $this->entityManager->getRepository(ApiToken::class);
-        $token = $tokenRepo->find(1); // Assuming only one token stored
+        $token = $tokenRepo->find(1);
 
         if (!$token || $token->getExpiresAt() <= new \DateTime()) {
-            // Token is missing or expired, regenerate it
+            // Si le token n'existe pas et/ou est expiré, on le régen
             return $this->refreshToken();
         }
 
         return $token->getAccessToken();
     }
 
+    // FONCTION POUR REGENERER LE TOKEN 
     private function refreshToken(): string
     {
-        // Request a new token from IGDB API
+        // On envoie la requête à l'API de twitch pour obtenir un nouveau token
         $response = $this->httpClient->request('POST', 'https://id.twitch.tv/oauth2/token', [
             'body' => [
                 'client_id' => $this->clientId,
@@ -49,12 +48,13 @@ class ApiTokenService
         ]);
 
         $data = $response->toArray();
+        // on récupère le token et le delai d'expiration
         $accessToken = $data['access_token'];
         $expiresIn = $data['expires_in'];
 
-        // Update token in database
+        // On met à jour le token en BDD ou on crée si il n'y en a pas ()
         $tokenRepo = $this->entityManager->getRepository(ApiToken::class);
-        $token = $tokenRepo->find(1) ?? new ApiToken();
+        $token = $tokenRepo->find(1) ?? new ApiToken(); // opérateur sql coalesce
         $token->setAccessToken($accessToken);
         $token->setExpiresAt((new \DateTime())->add(new \DateInterval('PT' . $expiresIn . 'S')));
 

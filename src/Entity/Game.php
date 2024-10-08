@@ -52,6 +52,9 @@ class Game
     #[ORM\ManyToMany(targetEntity: GameCategory::class, mappedBy: 'game')]
     private Collection $gameCategories;
 
+    #[ORM\Column]
+    private ?int $apiId = null;
+
     public function __construct()
     {
         $this->reviews = new ArrayCollection();
@@ -216,6 +219,18 @@ class Game
         if ($this->gameCategories->removeElement($gameCategory)) {
             $gameCategory->removeGame($this);
         }
+
+        return $this;
+    }
+
+    public function getApiId(): ?int
+    {
+        return $this->apiId;
+    }
+
+    public function setApiId(int $apiId): static
+    {
+        $this->apiId = $apiId;
 
         return $this;
     }

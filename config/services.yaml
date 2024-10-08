@@ -25,12 +25,10 @@ services:
       - '../src/Kernel.php'
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
-  App\Controller\GameController:
-    arguments:
-      $apiUrl: '%igdb_api_url%'
-      $clientId: '%igdb_client_id%'
+
   App\Service\ApiTokenService:
     arguments:
       $clientId: '%igdb_client_id%'
       $clientSecret: '%env(IGDB_CLIENT_SECRET)%'
-      $apiUrl: '%env(IGDB_API_URL)%'
+    autowire: true
+    autoconfigure: true
