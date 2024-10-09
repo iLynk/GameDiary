@@ -5,7 +5,9 @@ namespace App\Controller;
 
 use App\Entity\Game;
 use App\Entity\GameCategory;
+use App\Entity\GamePlatform;
 use App\Repository\GameCategoryRepository;
+use App\Repository\GamePlatformRepository;
 use App\Repository\GameRepository;
 use App\Service\ApiTokenService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -116,17 +118,17 @@ class ApiController extends AbstractController
 
             // on récupère toutes les catégories existantes
             $allCategories = $gameCategoryRepository->findAllApiId();
-            $AllIds = [];
+            $AllCategoriesIds = [];
 
             // foreach afin de faciliter la comparaison par la suite (tableau simple au lieu d'une collection)
             foreach ($allCategories as $allCategory) {
-                $AllIds[] = $allCategory['apiId'];
+                $AllCategoriesIds[] = $allCategory['apiId'];
             }
 
             // on populate l'entité avec les résultats
             foreach ($categories as $category) {
                 // on vérifie que la catégorie n'existe pas déjà en bdd
-                if (!in_array($category['id'], $AllIds)) {
+                if (!in_array($category['id'], $AllCategoriesIds)) {
                     $gameCategory = new GameCategory();
                     $gameCategory->setApiId($category['id'])
                         ->setName($category['name'])
@@ -173,7 +175,51 @@ class ApiController extends AbstractController
           return $this->json(['resultat' => 'toutes les images ont bien été récupérées']);
   }*/
 
+    // FONCTION POUR RECUPERER TOUTES LES PLATEFORMES DE JEU
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    #[Route('/getPlatforms', methods: ['GET'])]
+    public function getPlatforms(EntityManagerInterface $entityManager, GamePlatformRepository $gamePlatformRepository): JsonResponse
+    {
+        $gamePlatformsData = $this->httpClient->request('POST', $this->getParameter('igdb_api_url') . '/platforms', [
+            'headers' => [
+                'Client-ID' => $this->getParameter('igdb_client_id'),
+                'Authorization' => 'Bearer ' . $this->apiToken,
+            ],
+            'body' => 'fields id,name; limit 500;'
+        ]);
 
+        $gamePlatformsData = $gamePlatformsData->toArray();
+
+        $allPlatforms = $gamePlatformRepository->findAllApiId();
+        $AllPlatformIds = [];
+        foreach ($allPlatforms as $allPlatform) {
+            $AllPlatformIds[] = $allPlatform['apiId'];
+        }
+        foreach ($gamePlatformsData as $gamePlatformData) {
+            if (!in_array($gamePlatformData['id'], $AllPlatformIds)) {
+                $gamePlatform = new GamePlatform();
+                $gamePlatform->setApiId($gamePlatformData['id']);
+                $gamePlatform->setName($gamePlatformData['name']);
+                $entityManager->persist($gamePlatform);
+            }
+        }
+        $entityManager->flush();
+        return $this->json(['result' => 'plateformes bien ajoutées en bdd']);
+    }
 }
 
+/*le petit problème c'est que l'api ne peut retourner que 500 résultats par requête, j'obtiens donc mes 500 premiers jeux (qui sont amenés à changer si l'api est alimentée de nouveautés)
+pour les covers de jeu par exemple, je ne vois pas trop comment faire...
+j'ai une idée de récupérer mes jeux dans un premier temps en initiant game.cover à ' ', faire par la suite une boucle sur tous mes jeux en effectuant une requête vers l'api /covers
+avec dans le body un équivalent de "where game = $apiIdGame et ça me retournerait l'url de l'image du jeu que je set dans mes $game mais ça m'a l'air vachement relou...
+
+deuxieme point, j'ai fait une route qui me permet d'aller chercher toutes mes plateformes, mais je ne sais pas comment faire entre, faire une relation entre game et gamePlatform pour procéder comme avec categories
+ou alors, faire une propriété platform dans mon entité game, et faire un truc du style $platform = $gamePlatformRepository->FindOneBy(['apiId' => id récup par l'api])
+*/
 
