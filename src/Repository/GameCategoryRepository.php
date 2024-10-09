@@ -23,8 +23,24 @@ class GameCategoryRepository extends ServiceEntityRepository
             ->select('gc.apiId')
             ->orderBy('gc.apiId', 'ASC')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
+    }
+
+    public function findCategoryNameByApiId(string $apiId)
+    {
+        return $this->createQueryBuilder('gc')
+            ->andWhere('gc.apiId = :apiId')
+            ->setParameter('apiId', $apiId)
+            ->getQuery()
+            ->getScalarResult();
+    }
+
+    public function getAllCategoriesName(): array
+    {
+        return $this->createQueryBuilder('gc')
+            ->select('gc.apiId, gc.name')
+            ->getQuery()
+            ->getResult();
     }
     //    /**
     //     * @return GameCategory[] Returns an array of GameCategory objects

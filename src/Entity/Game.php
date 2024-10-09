@@ -23,9 +23,6 @@ class Game
     private ?string $slug = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $releaseDate = null;
-
-    #[ORM\Column(length: 255)]
     private ?string $cover = null;
 
     #[ORM\Column(type: Types::JSON)]
@@ -54,6 +51,12 @@ class Game
 
     #[ORM\Column]
     private ?int $apiId = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $storyline = null;
+
+    #[ORM\Column(length: 10)]
+    private ?string $releaseDate = null;
 
     public function __construct()
     {
@@ -87,18 +90,6 @@ class Game
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function getReleaseDate(): ?string
-    {
-        return $this->releaseDate;
-    }
-
-    public function setReleaseDate(string $releaseDate): static
-    {
-        $this->releaseDate = $releaseDate;
 
         return $this;
     }
@@ -234,4 +225,29 @@ class Game
 
         return $this;
     }
+
+    public function getStoryline(): ?string
+    {
+        return $this->storyline;
+    }
+
+    public function setStoryline(?string $storyline): static
+    {
+        $this->storyline = $storyline;
+
+        return $this;
+    }
+
+    public function getReleaseDate(): ?string
+    {
+        return $this->releaseDate;
+    }
+
+    public function setReleaseDate(string $releaseDate): static
+    {
+        $this->releaseDate = $releaseDate;
+
+        return $this;
+    }
 }
+
