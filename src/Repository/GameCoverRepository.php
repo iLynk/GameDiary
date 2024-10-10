@@ -16,6 +16,15 @@ class GameCoverRepository extends ServiceEntityRepository
         parent::__construct($registry, GameCover::class);
     }
 
+    public function findUrlById(int $id): ?string
+    {
+        return $this->createQueryBuilder('gco')
+            ->select('gco.url')
+            ->andWhere('gco.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
     //    /**
     //     * @return GameCover[] Returns an array of GameCover objects
     //     */

@@ -5,8 +5,10 @@ namespace App\Controller;
 
 use App\Entity\Game;
 use App\Entity\GameCategory;
+use App\Entity\GameCover;
 use App\Entity\GamePlatform;
 use App\Repository\GameCategoryRepository;
+use App\Repository\GameCoverRepository;
 use App\Repository\GamePlatformRepository;
 use App\Repository\GameRepository;
 use App\Service\ApiTokenService;
@@ -23,6 +25,11 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+/* Bienvenue dans l'api controller, le plus gros controller de l'application, vous allez retrouver ici les fonctions faisant appel à l'API IGDB
+   Donc, la route pour récupérer les jeux, les catégories, les plateformes, les images ... ...
+   Bref, je vous laisse faire un tour ! J'ai essayé de tout commenter pour que ce soit le plus lisible possible, bonne balade :) !
+*/
+
 class ApiController extends AbstractController
 {
     private HttpClientInterface $httpClient;
@@ -38,62 +45,95 @@ class ApiController extends AbstractController
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param Game $game
      * @param GameRepository $gameRepository
      * @param GameCategoryRepository $gameCategoryRepository
+     * @param GamePlatformRepository $gamePlatformRepository
      * @return JsonResponse
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
-     * @throws Exception
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     #[Route('/getGames', methods: ['GET'])]
-    // FONCTION POUR POPULATE L'ENTITE GAME
-    public function getGames(EntityManagerInterface $entityManager, Game $game, GameRepository $gameRepository, GameCategoryRepository $gameCategoryRepository): JsonResponse
+// FONCTION QUI RECUPERE LES JEUX QUI ONT ETE EVALUES PAR AU MOINS 500 PERSONNES AFIN D'AVOIR DES JEUX "CONNUS"
+    public function getGames(EntityManagerInterface $entityManager, GameRepository $gameRepository, GameCategoryRepository $gameCategoryRepository, GamePlatformRepository $gamePlatformRepository): JsonResponse
     {
-        // on récupère les jeux via l'API
-        $gamesData = $this->httpClient->request('POST', $this->getParameter('igdb_api_url') . '/games', [
-            'headers' => [
-                'Client-ID' => $this->getParameter('igdb_client_id'),
-                'Authorization' => 'Bearer ' . $this->apiToken,
-            ],
-            // on adapte les fields pour récuperer seulement ce que l'on veut
-            'body' => 'fields id, cover, genres, name, slug, first_release_date, storyline, platforms; limit 500;'
-        ]);
-        $gamesData = $gamesData->toArray();
-        // $allGames = [];
-        foreach ($gamesData as $gameData) {
-            $game = new Game();
-            $game->setApiId($gameData['id'])
-                ->setName($gameData['name'])
-                ->setSlug($gameData['slug']);
-            if (isset($gameData['first_release_date'])) {
-                $dateToConvert = $gameData['first_release_date'];
-                $dateConverted = (new \DateTimeImmutable())->setTimestamp($dateToConvert)->format('Y-m-d');
-                $game->setReleaseDate($dateConverted);
-            } else {
-                $game->setReleaseDate('TBA');
-            }
-            if (isset($gameData['storyline'])) {
-                $game->setStoryline($gameData['storyline']);
-            }
-            if (isset($gameData['cover'])) {
-                $game->setCover($gameData['cover']);
-            } else {
-                $game->setCover('');
-            }
-            if (isset($gameData['genres'])) foreach ($gameData['genres'] as $genreApiId) {
-                $game->addGameCategory($gameCategoryRepository->findOneBy(['apiId' => $genreApiId]));
+        // on englobe la requête dans un try/catch pour gérer les erreurs
+        try {
+            // Requête pour récupérer les jeux
+            $gamesData = $this->httpClient->request('POST', $this->getParameter('igdb_api_url') . '/games', [
+                'headers' => [
+                    'Client-ID' => $this->getParameter('igdb_client_id'),
+                    'Authorization' => 'Bearer ' . $this->apiToken,
+                ],
+                // On adapte les fields pour récupérer seulement ce que l'on veut
+                'body' => 'fields id, cover.image_id, genres, name, slug, first_release_date, storyline, platforms; where total_rating_count > 500; limit 500 ;'
+            ]);
+            // on transforme en tableau pour que ce soit plus simple à traiter
+            $gamesData = $gamesData->toArray();
+
+            // Traitement des données de chaque jeu
+            foreach ($gamesData as $gameData) {
+                $game = new Game();
+                $game->setApiId($gameData['id'])
+                    ->setName($gameData['name'])
+                    ->setSlug($gameData['slug']);
+
+                // Gestion de la date de sortie et conversion en date format "d-m-Y"
+                if (isset($gameData['first_release_date'])) {
+                    $dateToConvert = $gameData['first_release_date'];
+                    $dateConverted = (new \DateTimeImmutable())->setTimestamp($dateToConvert)->format('d-m-Y');
+                    $game->setReleaseDate($dateConverted);
+                } else {
+                    // Dans notre cas, les jeux sont tous sortis mais ça reste intéressant de traiter le cas ou la date n'existe pas encore
+                    $game->setReleaseDate('TBA');
+                }
+
+                // Gestion du "résumé"
+                if (isset($gameData['storyline'])) {
+                    $game->setStoryline($gameData['storyline']);
+                }
+
+                // Gestion de l'artwork du jeu, pour l'instant ça ne marche pas
+                if (isset($gameData['cover'])) {
+                    $game->setCover('ça marche pas de fou');
+                } else {
+                    $game->setCover('');
+                }
+                // Ajout des catégories si disponibles
+                if (isset($gameData['genres'])) {
+                    foreach ($gameData['genres'] as $genreApiId) {
+                        // On utilise le repo des categories pour trouver l(es)'entité(s) category correspondante(s)
+                        $game->addGameCategory($gameCategoryRepository->findOneBy(['apiId' => $genreApiId]));
+                    }
+                }
+
+                // Ajout des plateformes si disponibles
+                if (isset($gameData['platforms'])) {
+                    foreach ($gameData['platforms'] as $platformApiId) {
+                        // même principe qu'avec les catégories, mais pour les plateformes
+                        $game->addGamePlatform($gamePlatformRepository->findOneBy(['apiId' => $platformApiId]));
+                    }
+                }
+
+                // on persiste le nouveau jeu à chaque itération de la boucle
+                $entityManager->persist($game);
             }
 
-            $entityManager->persist($game);
+            // Et on tire la chasse !
             $entityManager->flush();
-        }
 
-        return $this->json(['tout a marche?' => 'ouiiiiii']);
+            // On envoie une réponse au navigateur pour indiquer que tout s'est bien passé
+            return $this->json(['message' => 'Tous les jeux ont été récupérés et enregistrés.',
+                'type' => 'success'], Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            // On envoie une réponse pour dire que ça ne s'est pas bien passé malheureusement...
+            return $this->json(['message' => 'Une erreur est survenue lors de la récupération des jeux...', 'error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     /**
      * @throws ServerExceptionInterface
@@ -159,23 +199,61 @@ class ApiController extends AbstractController
         }
     }
 
-    /*   #[Route('/getGameCovers', methods: ['GET'])]
-  // FONCTION POUR RECUPERER TOUTES LES COVER DES JEUX
-     public function getGameCovers(EntityManagerInterface $entityManager, GameCategoryRepository $gameCategoryRepository): JsonResponse
-      {
-          $gameCoversData = $this->httpClient->request('POST', $this->getParameter('igdb_api_url') . '/covers', [
-              'headers' => [
-                  'Client-ID' => $this->getParameter('igdb_client_id'),
-                  'Authorization' => 'Bearer ' . $this->apiToken,
-              ],
-              // on adapte les fields pour récuperer seulement ce que l'on veut
-              'body' => 'fields*; limit 500;'
-          ]);
-          ])
-          return $this->json(['resultat' => 'toutes les images ont bien été récupérées']);
-  }*/
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    #[Route('/getCovers', methods: ['GET'])]
+// FONCTION POUR RECUPERER LES COVER DES JEUX PAR LOTS ET LES MODIFIER POUR 1080p
+    public function getCovers(EntityManagerInterface $entityManager, GameRepository $gameRepository): JsonResponse
+    {
+        // Récupérer tous les jeux avec leurs API ID
+        $games = $gameRepository->findAll(); // Récupérer tous les jeux
+        $batchSize = 10; // Taille du lot pour les requêtes API
+        $gameBatches = array_chunk($games, $batchSize); // Diviser les jeux en lots
 
-    // FONCTION POUR RECUPERER TOUTES LES PLATEFORMES DE JEU
+        foreach ($gameBatches as $gameBatch) {
+            // Extraire les game IDs des jeux dans ce lot
+            $gameIds = array_map(fn($game) => $game->getApiId(), $gameBatch);
+
+            // Requête pour récupérer les couvertures via l'API IGDB en une seule requête pour plusieurs jeux
+            $gameCoversData = $this->httpClient->request('POST', $this->getParameter('igdb_api_url') . '/covers', [
+                'headers' => [
+                    'Client-ID' => $this->getParameter('igdb_client_id'),
+                    'Authorization' => 'Bearer ' . $this->apiToken,
+                ],
+                'body' => 'fields game, url; where game = (' . implode(',', $gameIds) . '); limit ' . $batchSize . ';'
+            ]);
+
+            $gameCoversData = $gameCoversData->toArray();
+
+            // Mettre à jour les entités Game pour chaque couverture récupérée
+            foreach ($gameCoversData as $coverData) {
+                $game = $gameRepository->findOneBy(['apiId' => $coverData['game']]);
+                if ($game && isset($coverData['url'])) {
+                    // Remplacer "t_thumb" par "t_1080p" dans l'URL de la couverture
+                    $coverUrl = str_replace('t_thumb', 't_1080p', $coverData['url']);
+
+                    // Mettre à jour l'entité Game avec la nouvelle URL de couverture
+                    $game->setCover($coverUrl);
+                    $entityManager->persist($game); // Persister la mise à jour de la couverture
+                }
+            }
+
+            // Sauvegarder les entités modifiées après chaque lot
+            $entityManager->flush();
+            $entityManager->clear(); // Libérer la mémoire après chaque lot
+        }
+
+        // Réponse JSON pour indiquer que toutes les couvertures ont été récupérées
+        return $this->json(['message' => 'Toutes les couvertures ont été récupérées et mises à jour.']);
+    }
+
+
+
     /**
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
@@ -184,6 +262,7 @@ class ApiController extends AbstractController
      * @throws ClientExceptionInterface
      */
     #[Route('/getPlatforms', methods: ['GET'])]
+    // FONCTION POUR RECUPERER TOUTES LES PLATEFORMES DE JEU
     public function getPlatforms(EntityManagerInterface $entityManager, GamePlatformRepository $gamePlatformRepository): JsonResponse
     {
         $gamePlatformsData = $this->httpClient->request('POST', $this->getParameter('igdb_api_url') . '/platforms', [

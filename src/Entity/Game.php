@@ -5,8 +5,8 @@ namespace App\Entity;
 use App\Repository\GameRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 class Game
@@ -16,20 +16,44 @@ class Game
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column]
+    #[Assert\NotNull(message: 'L\'ID de l\'API est obligatoire.')]
+    private ?int $apiId = null;
+
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom du jeu ne doit pas être vide.')]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Le nom du jeu ne doit pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le slug ne doit pas être vide.')]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Le slug ne doit pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $slug = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $storyline = null;
+
+    #[ORM\Column(length: 10)]
+    #[Assert\NotBlank(message: 'La date de sortie ne doit pas être vide.')]
+    #[Assert\Length(
+        max: 10,
+        maxMessage: 'La date de sortie ne doit pas dépasser {{ limit }} caractères.'
+    )]
+    private ?string $releaseDate = null;
+
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'La couverture ne doit pas être vide.')]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'L\'URL de la couverture ne doit pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $cover = null;
-
-    #[ORM\Column(type: Types::JSON)]
-    private array $platform = [];
-
-    #[ORM\Column(type: Types::JSON)]
-    private array $editor = [];
 
     /**
      * @var Collection<int, Review>
@@ -49,25 +73,35 @@ class Game
     #[ORM\ManyToMany(targetEntity: GameCategory::class, mappedBy: 'game')]
     private Collection $gameCategories;
 
-    #[ORM\Column]
-    private ?int $apiId = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $storyline = null;
-
-    #[ORM\Column(length: 10)]
-    private ?string $releaseDate = null;
+    /**
+     * @var Collection<int, GamePlatform>
+     */
+    #[ORM\ManyToMany(targetEntity: GamePlatform::class, mappedBy: 'games')]
+    private Collection $gamePlatforms;
 
     public function __construct()
     {
         $this->reviews = new ArrayCollection();
         $this->userLists = new ArrayCollection();
         $this->gameCategories = new ArrayCollection();
+        $this->gamePlatforms = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getApiId(): ?int
+    {
+        return $this->apiId;
+    }
+
+    public function setApiId(int $apiId): static
+    {
+        $this->apiId = $apiId;
+
+        return $this;
     }
 
     public function getName(): ?string
@@ -106,26 +140,26 @@ class Game
         return $this;
     }
 
-    public function getPlatform(): array
+    public function getStoryline(): ?string
     {
-        return $this->platform;
+        return $this->storyline;
     }
 
-    public function setPlatform(array $platform): static
+    public function setStoryline(?string $storyline): static
     {
-        $this->platform = $platform;
+        $this->storyline = $storyline;
 
         return $this;
     }
 
-    public function getEditor(): array
+    public function getReleaseDate(): ?string
     {
-        return $this->editor;
+        return $this->releaseDate;
     }
 
-    public function setEditor(array $editor): static
+    public function setReleaseDate(string $releaseDate): static
     {
-        $this->editor = $editor;
+        $this->releaseDate = $releaseDate;
 
         return $this;
     }
@@ -214,40 +248,30 @@ class Game
         return $this;
     }
 
-    public function getApiId(): ?int
+    /**
+     * @return Collection<int, GamePlatform>
+     */
+    public function getGamePlatforms(): Collection
     {
-        return $this->apiId;
+        return $this->gamePlatforms;
     }
 
-    public function setApiId(int $apiId): static
+    public function addGamePlatform(GamePlatform $gamePlatform): static
     {
-        $this->apiId = $apiId;
+        if (!$this->gamePlatforms->contains($gamePlatform)) {
+            $this->gamePlatforms->add($gamePlatform);
+            $gamePlatform->addGame($this);
+        }
 
         return $this;
     }
 
-    public function getStoryline(): ?string
+    public function removeGamePlatform(GamePlatform $gamePlatform): static
     {
-        return $this->storyline;
-    }
-
-    public function setStoryline(?string $storyline): static
-    {
-        $this->storyline = $storyline;
-
-        return $this;
-    }
-
-    public function getReleaseDate(): ?string
-    {
-        return $this->releaseDate;
-    }
-
-    public function setReleaseDate(string $releaseDate): static
-    {
-        $this->releaseDate = $releaseDate;
+        if ($this->gamePlatforms->removeElement($gamePlatform)) {
+            $gamePlatform->removeGame($this);
+        }
 
         return $this;
     }
 }
-
