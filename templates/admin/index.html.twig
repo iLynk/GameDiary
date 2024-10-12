@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('build/admin_styles.css') }}">
+{% endblock %}
+{% block body %}
+    <h1>Console Administrateur !</h1>
+
+    <div class="game_buttons">
+            <button onclick="sendPostRequest('{{ path('api_get_categories') }}')">Récupérer les catégories</button>
+            <button onclick="sendPostRequest('{{ path('api_get_platforms') }}')">Récupérer les plateformes</button>
+            <button onclick="sendPostRequest('{{ path('api_get_games') }}')">Récupérer les jeux</button>
+            <button onclick="sendPostRequest('{{ path('api_get_covers') }}')">Récupérer les artworks</button>
+    </div>
+    <div class="loader">
+        <img src="images/loader.gif" alt="image de chargement" class="not-visible">
+        <p class="not-visible">La requête est en cours, veuillez patienter !</p>
+    </div>
+    {% for label, messages in app.flashes %}
+        <div>
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/admin.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,36 @@
+@import '_variables.scss';
+body {
+  background-color: $primary-blue;
+  color: $cream;
+  text-align: center;
+  font-family: $font-family-game;
+  h1{
+    text-align: center;
+  }
+
+  div.game_buttons{
+    button{
+      background-color: #353b5f;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: x-large;
+    }
+  }
+
+  div.loader{
+    img{
+      margin: 0 auto;
+      width: 20%;
+      height: 20%;
+    }
+  }
+
+  .not-visible{
+    display: none;
+  }
+
+  .blurred{
+    background-color: rgba(black, 0.8);
+  }
+}

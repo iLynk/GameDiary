@@ -1,0 +1,108 @@
+@import '_variables.scss';
+
+body {
+
+  background-color: $primary-blue;
+  color: $cream;
+  font-family: $font-family-game;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+form {
+
+  max-width: 80%;
+  margin: 70px auto;
+  align-content: center;
+  padding: 20px;
+  border: 1px solid $cream;
+  border-radius: 8px;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: $cream;
+}
+
+label {
+  display: block;
+  text-align: left;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #bbb;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px 0 12px 12px;
+  margin-bottom: 15px;
+  border: 1px solid $cream;
+  border-radius: 4px;
+  background-color: $primary-blue;
+  color: #fff;
+  font-size: 0.9rem;
+}
+input:focus{
+  background-color: rgba($rink, 0.45);
+}
+
+input::placeholder {
+  color: rgba($cream, 0.45);
+  font-style: italic;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.checkbox {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: $rink;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #96334a;
+}
+
+/* Alert message */
+.alert {
+  margin-bottom: 20px;
+  padding: 10px;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.alert-danger {
+  background-color: #e63946;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  form {
+    max-width: 400px;
+    padding: 30px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  button {
+    font-size: 1.1rem;
+  }
+}

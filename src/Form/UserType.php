@@ -14,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType
 {
+    //  utilisé pour générer le createdAt et updatedAt
     use DateTrait;
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -21,20 +22,31 @@ class UserType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Votre nom d\'utilisateur',
-                'required' => true
+                'required' => true,
+                'attr' => array(
+                    'placeholder' => 'Woona',
+                    'autofocus' => true
+                )
             ])
-            ->add('email', EmailType::class,[
+            ->add('email', EmailType::class, [
                 'label' => 'Votre mail',
-                'required' => true
+                'required' => true,
+                'attr' => array(
+                    'placeholder' => 'superGeek@gmail.com',
+                )
             ])
             ->add('password', TextType::class, [
                 'label' => 'Votre mot de passe',
-                'required' => true
+                'required' => true,
+                'attr' => array(
+                    'placeholder' => 'mot de passe',
+                )
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'S\'inscrire',
                 'attr' => ['class' => 'form-register']
             ])
+            // utilisation de l'event POST_SUBMIT pour avoir déjà l'entité User "crée"
             ->addEventListener(FormEvents::POST_SUBMIT, $this->dateTrait());
     }
 

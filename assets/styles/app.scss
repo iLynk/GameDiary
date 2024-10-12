@@ -1,4 +1,7 @@
+@import '_variables.scss';
 body {
-    background-color: palevioletred;
-    color: navajowhite;
+    background-color: $primary-blue;
+    color: $cream;
+    text-align: center;
+    font-family: $font-family-game;
 }

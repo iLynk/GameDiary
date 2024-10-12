@@ -3,9 +3,15 @@
 {% block title %}Page d'accueil !{% endblock %}
 
 {% block body %}
-
 <div class="example-wrapper">
-    <h1>Bienvenue ! </h1>
+    <h1>GAME DIARY ! </h1>
     {% include '/_partials/_flashes.html.twig'%}
 </div>
+    {% if app.user %}
+        <p>
+            Bonjour {{ app.user.name }}, j'espère que tu vas bien !
+        </p>
+    {% endif %}
+    <script src="{{ asset('build/main_js.js') }}"></script>
+
 {% endblock %}

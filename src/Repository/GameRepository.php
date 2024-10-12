@@ -16,7 +16,7 @@ class GameRepository extends ServiceEntityRepository
         parent::__construct($registry, Game::class);
     }
 
-    // fonction pour récupérer tous les ApiId
+    // fonction pour récupérer tous les ApiId (utilisé dans l'api controller, pour getCovers())
     public function findAllApiId(): array
     {
         return $this->createQueryBuilder('g')
