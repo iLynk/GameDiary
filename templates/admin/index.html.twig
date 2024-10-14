@@ -5,6 +5,7 @@
 {% block body %}
     <h1>Console Administrateur !</h1>
 
+    <h2>Votre boite à outils API :</h2>
     <div class="game_buttons">
         <button onclick="sendPostRequest('{{ path('api_get_categories') }}')">Récupérer les catégories</button>
         <button onclick="sendPostRequest('{{ path('api_get_platforms') }}')">Récupérer les plateformes</button>
@@ -12,6 +13,14 @@
         <button onclick="sendPostRequest('{{ path('api_get_covers') }}')">Récupérer les artworks (peut être un peu
             long !)
         </button>
+    </div>
+    <p>{{ ux_icon('ci:circle-warning') }} l'ordre des requêtes a son importance <em>(vous ne pouvez pas charger les jeux avant d'avoir chargé les catégories/plateformes)</em></p>
+
+    <div class="moderation">
+        <a href="">
+            <h3>Bannir un utilisateur ?</h3>
+            <h4>Supprimer un avis publié ?</h4>
+        </a>
     </div>
     <div class="loader">
         <img src="images/loader.gif" alt="image de chargement" class="not-visible">

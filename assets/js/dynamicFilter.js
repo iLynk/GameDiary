@@ -25,11 +25,10 @@ function filterCategories(categoryName) {
     // Parcourir chaque jeu pour vérifier ses catégories
     games.forEach(function(game) {
         // Récupérer les catégories du jeu
-        let categories = game.getAttribute('data-categories');
+        let categories = game.getAttribute("data-categories");
 
         // Si le jeu appartient à la catégorie sélectionnée, l'afficher, sinon le masquer
         if (categories.includes(categoryName)) {
-            console.log(game);
             game.style.display = "block"; // Afficher le jeu
         } else {
             game.style.display = "none";  // Masquer le jeu

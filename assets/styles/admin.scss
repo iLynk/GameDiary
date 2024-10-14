@@ -2,22 +2,47 @@
 body {
   background-color: $primary-blue;
   color: $cream;
-  text-align: center;
   font-family: $font-family-game;
+
   h1{
     text-align: center;
   }
 
+  h2{
+    text-align: left;
+    padding-left: 10px;
+  }
+a{
+  text-decoration: none;
+  color: $cream;
+}
   div.game_buttons{
+    width: 250px;
     display: flex;
+    margin-left: 10px;
     flex-direction: column;
+
     button{
+      width: 250px;
+      text-align: center;
+      cursor: pointer;
+      margin: 10px auto;
+      padding: 7px;
       background-color: #353b5f;
       border: none;
       border-radius: 5px;
       color: white;
-      font-size: x-large;
+      font-size: large;
     }
+    button:hover{
+      background-color: $secondary-blue;
+      color: $cream;
+    }
+  }
+  svg{
+    width: 45px;
+    padding: 6px;
+    vertical-align: middle;
   }
 
   div.loader{
@@ -32,7 +57,4 @@ body {
     display: none;
   }
 
-  .blurred{
-    background-color: rgba(black, 0.8);
-  }
 }

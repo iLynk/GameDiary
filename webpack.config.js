@@ -13,6 +13,7 @@ Encore
     .addStyleEntry('login_styles', './assets/styles/login.scss')
     .addStyleEntry('navbar_styles', './assets/styles/navbar.scss')
     .addStyleEntry('register_styles', './assets/styles/register.scss')
+    .addStyleEntry('game_styles', './assets/styles/game.scss')
 
     // Configurer les options de surveillance pour Webpack Watcher
     .configureWatchOptions(function(watchOptions) {

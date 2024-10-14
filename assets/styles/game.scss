@@ -1,4 +1,47 @@
-img{
-  width: 150px;
-  height: 150px;
+@import 'variables.scss';
+
+body {
+  .categories-list {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+    justify-content: space-evenly;
+
+    .category {
+      cursor: pointer;
+      width: 250px;
+      background-color: $secondary-blue;
+      text-align: center;
+      padding: 10px;
+      border: 1px solid transparent;
+      border-radius: 15px;
+    }
+
+  }
+
+  .reset-category-filter {
+    width: fit-content;
+    cursor: pointer;
+    padding: 10px;
+    margin-left: 10px;
+    border-radius: 15px;
+    border: 3px solid $secondary-blue;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  .category:hover,
+  .reset-category-filter:hover{
+    background-color: #2d345b;
+    color: white;
+  }
+
+  #search-game{
+    width: 200px;
+    padding: 5px;
+    margin: 15px;
+    border-radius: 7px;
+    border: 1px solid $cream;
+    background-color: $primary-blue;
+    color: $cream;
+  }
 }

@@ -3,26 +3,22 @@
 {% block title %}Page d'accueil !{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('build/app_styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/game_styles.css') }}">
 {% endblock %}
 
 {% block body %}
     <div class="example-wrapper">
         <h1>GAME DIARY ! </h1>
     </div>
-    {% if app.user %}
-        <p>
-            Bonjour {{ app.user.name }}, j'espère que tu vas bien !
-        </p>
-    {% endif %}
+    <h2>Bienvenue sur Game Diary,<br> le site ou vous pouvez garder en mémoire, vos plus belles aventures</h2>
     {% if games %}
+    <h3>Les derniers jeux marquants :</h3>
     <section class="games">
-
         {% for game in games %}
             <div class="game">
-                <img src="{{ game.cover }}" alt="image du jeu {{ game.name }}">
                 <a href="{{ path('app_game_show', {'slug': game.slug}) }}">
                     <p class="game-name">{{ game.name }}</p>
+                    <img src="{{ game.cover }}" alt="image du jeu {{ game.name }}">
                 </a>
                 <p>({{ game.releasedate|date('d-m-Y') }})</p>
             </div>
@@ -30,6 +26,10 @@
         {% else %}
             <p>Désolé, aucun jeu n'est disponible</p>
         {% endif %}
+    </section>
+    <h4>Les derniers avis :</h4>
+    <section class="reviews">
+
     </section>
 
     <script src="{{ asset('build/main_js.js') }}"></script>
