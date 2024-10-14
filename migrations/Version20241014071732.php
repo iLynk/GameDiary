@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241007211241 extends AbstractMigration
+final class Version20241014071732 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,9 +21,11 @@ final class Version20241007211241 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE api_token (id INT AUTO_INCREMENT NOT NULL, access_token VARCHAR(255) NOT NULL, expires_at DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE game (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, slug VARCHAR(255) NOT NULL, release_date VARCHAR(255) NOT NULL, cover VARCHAR(255) NOT NULL, platform JSON NOT NULL, editor JSON NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE game_category (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, slug VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE game (id INT AUTO_INCREMENT NOT NULL, api_id INT NOT NULL, name VARCHAR(255) NOT NULL, slug VARCHAR(255), storyline VARCHAR(255) DEFAULT NULL, release_date VARCHAR(10) NOT NULL, cover VARCHAR(255), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE game_category (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, slug VARCHAR(255) NOT NULL, api_id INT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE game_category_game (game_category_id INT NOT NULL, game_id INT NOT NULL, INDEX IDX_254D7A0CC13DFE0 (game_category_id), INDEX IDX_254D7A0E48FD905 (game_id), PRIMARY KEY(game_category_id, game_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE game_platform (id INT AUTO_INCREMENT NOT NULL, api_id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE game_platform_game (game_platform_id INT NOT NULL, game_id INT NOT NULL, INDEX IDX_DC7CACB21B30B6D (game_platform_id), INDEX IDX_DC7CACBE48FD905 (game_id), PRIMARY KEY(game_platform_id, game_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE review (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, game_id INT NOT NULL, rate SMALLINT NOT NULL, comment LONGTEXT DEFAULT NULL, completed TINYINT(1) NOT NULL, published_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', updated_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', INDEX IDX_794381C6A76ED395 (user_id), INDEX IDX_794381C6E48FD905 (game_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', updated_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL (email), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE user_list (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, UNIQUE INDEX UNIQ_3E49B4D1A76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
@@ -32,6 +34,8 @@ final class Version20241007211241 extends AbstractMigration
         $this->addSql('CREATE TABLE messenger_messages (id BIGINT AUTO_INCREMENT NOT NULL, body LONGTEXT NOT NULL, headers LONGTEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', available_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', delivered_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', INDEX IDX_75EA56E0FB7336F0 (queue_name), INDEX IDX_75EA56E0E3BD61CE (available_at), INDEX IDX_75EA56E016BA31DB (delivered_at), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE game_category_game ADD CONSTRAINT FK_254D7A0CC13DFE0 FOREIGN KEY (game_category_id) REFERENCES game_category (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE game_category_game ADD CONSTRAINT FK_254D7A0E48FD905 FOREIGN KEY (game_id) REFERENCES game (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE game_platform_game ADD CONSTRAINT FK_DC7CACB21B30B6D FOREIGN KEY (game_platform_id) REFERENCES game_platform (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE game_platform_game ADD CONSTRAINT FK_DC7CACBE48FD905 FOREIGN KEY (game_id) REFERENCES game (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE review ADD CONSTRAINT FK_794381C6A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
         $this->addSql('ALTER TABLE review ADD CONSTRAINT FK_794381C6E48FD905 FOREIGN KEY (game_id) REFERENCES game (id)');
         $this->addSql('ALTER TABLE user_list ADD CONSTRAINT FK_3E49B4D1A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
@@ -46,6 +50,8 @@ final class Version20241007211241 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE game_category_game DROP FOREIGN KEY FK_254D7A0CC13DFE0');
         $this->addSql('ALTER TABLE game_category_game DROP FOREIGN KEY FK_254D7A0E48FD905');
+        $this->addSql('ALTER TABLE game_platform_game DROP FOREIGN KEY FK_DC7CACB21B30B6D');
+        $this->addSql('ALTER TABLE game_platform_game DROP FOREIGN KEY FK_DC7CACBE48FD905');
         $this->addSql('ALTER TABLE review DROP FOREIGN KEY FK_794381C6A76ED395');
         $this->addSql('ALTER TABLE review DROP FOREIGN KEY FK_794381C6E48FD905');
         $this->addSql('ALTER TABLE user_list DROP FOREIGN KEY FK_3E49B4D1A76ED395');
@@ -57,6 +63,8 @@ final class Version20241007211241 extends AbstractMigration
         $this->addSql('DROP TABLE game');
         $this->addSql('DROP TABLE game_category');
         $this->addSql('DROP TABLE game_category_game');
+        $this->addSql('DROP TABLE game_platform');
+        $this->addSql('DROP TABLE game_platform_game');
         $this->addSql('DROP TABLE review');
         $this->addSql('DROP TABLE user');
         $this->addSql('DROP TABLE user_list');

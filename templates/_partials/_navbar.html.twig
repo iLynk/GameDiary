@@ -16,17 +16,23 @@
     </div>
 
     <ul class="nav-list">
-        <li><a href="{{ path('app_home') }}" class="{% if app.request.get('_route') == 'app_home' %}active{% endif %}">Accueil</a></li>
-        <li><a href="{{ path('app_game') }}" class="{% if app.request.get('_route') == 'app_game' %}active{% endif %}">Jeux</a></li>
+        <li><a href="{{ path('app_home') }}" class="{% if app.request.get('_route') == 'app_home' %}active{% endif %}">Accueil</a>
+        </li>
+        <li><a href="{{ path('app_game') }}" class="{% if app.request.get('_route') == 'app_game' %}active{% endif %}">Jeux</a>
+        </li>
         {% if not app.user %}
-            <li><a href="{{ path('app_login') }}" class="{% if app.request.get('_route') == 'app_login' %}active{% endif %}">Connexion</a></li>
-            <li><a href="{{ path('app_register') }}" class="{% if app.request.get('_route') == 'app_register' %}active{% endif %}">Inscription</a></li>
+            <li><a href="{{ path('app_login') }}"
+                   class="{% if app.request.get('_route') == 'app_login' %}active{% endif %}">Connexion</a></li>
+            <li><a href="{{ path('app_register') }}"
+                   class="{% if app.request.get('_route') == 'app_register' %}active{% endif %}">Inscription</a></li>
         {% else %}
-            <li><a href="{{ path('app_home') }}" class="{% if app.request.get('_route') == 'app_home' %}active{% endif %}">Profil</a></li>
-            <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+            <li><a href="{{ path('app_home') }}"
+                   class="{% if app.request.get('_route') == 'app_home' %}active{% endif %}">Profil</a></li>
             {% if is_granted('ROLE_ADMIN') %}
-                <li><a href="{{ path('admin_dashboard') }}" class="{% if app.request.get('_route') == 'admin_dashboard' %}active{% endif %}">Admin</a></li>
+                <li><a href="{{ path('admin_dashboard') }}"
+                       class="{% if app.request.get('_route') == 'admin_dashboard' %}active{% endif %}">Admin</a></li>
             {% endif %}
+            <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
         {% endif %}
     </ul>
 </nav>

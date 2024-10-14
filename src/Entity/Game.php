@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\GameRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -29,7 +30,6 @@ class Game
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le slug ne doit pas être vide.')]
     #[Assert\Length(
         max: 255,
         maxMessage: 'Le slug ne doit pas dépasser {{ limit }} caractères.'
@@ -39,16 +39,8 @@ class Game
     #[ORM\Column(nullable: true)]
     private ?string $storyline = null;
 
-    #[ORM\Column(length: 10)]
-    #[Assert\NotBlank(message: 'La date de sortie ne doit pas être vide.')]
-    #[Assert\Length(
-        max: 10,
-        maxMessage: 'La date de sortie ne doit pas dépasser {{ limit }} caractères.'
-    )]
-    private ?string $releaseDate = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'La couverture ne doit pas être vide.')]
     #[Assert\Length(
         max: 255,
         maxMessage: 'L\'URL de la couverture ne doit pas dépasser {{ limit }} caractères.'
@@ -78,6 +70,9 @@ class Game
      */
     #[ORM\ManyToMany(targetEntity: GamePlatform::class, mappedBy: 'games')]
     private Collection $gamePlatforms;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $releaseDate = null;
 
     public function __construct()
     {
@@ -148,18 +143,6 @@ class Game
     public function setStoryline(?string $storyline): static
     {
         $this->storyline = $storyline;
-
-        return $this;
-    }
-
-    public function getReleaseDate(): ?string
-    {
-        return $this->releaseDate;
-    }
-
-    public function setReleaseDate(string $releaseDate): static
-    {
-        $this->releaseDate = $releaseDate;
 
         return $this;
     }
@@ -274,4 +257,18 @@ class Game
 
         return $this;
     }
+
+    public function getReleaseDate(): ?\DateTimeImmutable
+    {
+        return $this->releaseDate;
+    }
+
+    public function setReleaseDate(\DateTimeImmutable $releaseDate): static
+    {
+        $this->releaseDate = $releaseDate;
+
+        return $this;
+    }
+
+
 }

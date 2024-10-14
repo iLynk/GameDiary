@@ -21,10 +21,18 @@ class GameRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('g')
             ->select('g.apiId')
-            ->orderBy('g.apiId', 'ASC')
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findLatest():array{
+        return $this->createQueryBuilder('g')
+            ->select('g')
+            ->orderBy ('g.releaseDate', 'DESC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
     }
     //    /**
     //     * @return Game[] Returns an array of Game objects

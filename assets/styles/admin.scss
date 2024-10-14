@@ -9,6 +9,8 @@ body {
   }
 
   div.game_buttons{
+    display: flex;
+    flex-direction: column;
     button{
       background-color: #353b5f;
       border: none;

@@ -20,7 +20,8 @@ use Symfony\Contracts\HttpClient\Exception\{ClientExceptionInterface,
     DecodingExceptionInterface,
     RedirectionExceptionInterface,
     ServerExceptionInterface,
-    TransportExceptionInterface};
+    TransportExceptionInterface
+};
 
 /* Bienvenue dans l'api controller, le plus gros controller de l'application, vous allez retrouver ici les fonctions faisant appel à l'API IGDB
    Donc, la route pour récupérer les jeux, les catégories, les plateformes, les images ... ...
@@ -52,7 +53,7 @@ class ApiController extends AbstractController
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    #[Route('/getGames', name: "api_get_games", methods: ['POST'])]
+    #[Route('/getGames', name: "api_get_games", methods: ['POST', 'GET'])]
     // FONCTION QUI RECUPERE LES JEUX QUI ONT ETE EVALUES PAR AU MOINS 500 PERSONNES AFIN D'AVOIR DES JEUX "CONNUS"
     public function getGames(
         EntityManagerInterface $entityManager,
@@ -70,56 +71,51 @@ class ApiController extends AbstractController
                     'Authorization' => 'Bearer ' . $this->apiToken,
                 ],
                 // On adapte les fields pour récupérer seulement ce que l'on veut
-                'body' => 'fields id, cover.image_id, genres, name, slug, first_release_date, storyline, platforms; where total_rating_count > 500; limit 500;',
+                'body' => 'fields id, cover.image_id, genres, name, slug, first_release_date, storyline, platforms; where total_rating_count > 500; limit 500 ;'
             ])->toArray();
 
+            $allGames = $gameRepository->findAllApiId();
+            $allGamesIds = array_column($allGames, 'apiId');
             // Traitement des données de chaque jeu
             foreach ($gamesData as $gameData) {
-                // Vérifier si le jeu existe déjà dans la base de données par son apiId
-                $existingGame = $gameRepository->findOneBy(['apiId' => $gameData['id']]);
-                if (!$existingGame) {
+                if (!in_array($gameData['id'], $allGamesIds)) {
                     $game = new Game();
                     $game->setApiId($gameData['id'])
                         ->setName($gameData['name'])
                         ->setSlug($gameData['slug']);
-
                     // Gestion de la date de sortie et conversion en date format "d-m-Y"
                     if (isset($gameData['first_release_date'])) {
                         $dateToConvert = $gameData['first_release_date'];
-                        $dateConverted = (new \DateTimeImmutable())->setTimestamp($dateToConvert)->format('d-m-Y');
+                        $dateConverted = (new \DateTimeImmutable())->setTimestamp($dateToConvert);
                         $game->setReleaseDate($dateConverted);
                     } else {
-                        // Dans la requête que j'effectue, les jeux sont tous sortis mais ça reste intéressant de traiter le cas ou la date n'existe pas encore
-                        $game->setReleaseDate('TBA');
+                        // Dans notre cas, les jeux sont tous sortis mais ça reste intéressant de traiter le cas ou la date n'existe pas encore
+                        $game->setReleaseDate(null);
                     }
-
                     // Gestion du "résumé"
                     if (isset($gameData['storyline'])) {
                         $game->setStoryline($gameData['storyline']);
                     }
-
+                    // Gestion de l'artwork du jeu, pour l'instant ça ne marche pas
+                    if (isset($gameData['cover'])) {
+                        $game->setCover('ça marche pas de fou');
+                    } else {
+                        $game->setCover('');
+                    }
                     // Ajout des catégories si disponibles
                     if (isset($gameData['genres'])) {
                         foreach ($gameData['genres'] as $genreApiId) {
                             // On utilise le repo des categories pour trouver l(es)'entité(s) category correspondante(s)
-                            $category = $gameCategoryRepository->findOneBy(['apiId' => $genreApiId]);
-                            if ($category) {
-                                $game->addGameCategory($category);
-                            }
+                            $game->addGameCategory($gameCategoryRepository->findOneBy(['apiId' => $genreApiId]));
                         }
                     }
-
                     // Ajout des plateformes si disponibles
                     if (isset($gameData['platforms'])) {
                         foreach ($gameData['platforms'] as $platformApiId) {
                             // même principe qu'avec les catégories, mais pour les plateformes
-                            $platform = $gamePlatformRepository->findOneBy(['apiId' => $platformApiId]);
-                            if ($platform) {
-                                $game->addGamePlatform($platform);
-                            }
+                            $game->addGamePlatform($gamePlatformRepository->findOneBy(['apiId' => $platformApiId]));
                         }
                     }
-
                     // on persiste le nouveau jeu à chaque itération de la boucle
                     $entityManager->persist($game);
                 }
@@ -130,6 +126,7 @@ class ApiController extends AbstractController
 
             // On envoie une réponse au navigateur pour indiquer que tout s'est bien passé
             $this->addFlash('success', 'Tous les jeux ont été récupérés et enregistrés.');
+            $this->redirectToRoute('api_get_games');
         } catch (\Exception $e) {
             // On envoie une réponse pour dire que ça ne s'est pas bien passé malheureusement...
             $this->handleError('Une erreur est survenue lors de la récupération des jeux', $e);
@@ -179,6 +176,7 @@ class ApiController extends AbstractController
             $this->addFlash('success', 'Les catégories ont correctement été récupérées.');
         } catch (\Exception $e) {
             $this->handleError('Une erreur est survenue lors de la récupération des catégories', $e);
+        } catch (TransportExceptionInterface $e) {
         }
 
         return $this->redirectToRoute('admin_dashboard');
@@ -274,7 +272,7 @@ class ApiController extends AbstractController
                     $gamePlatform->setApiId($gamePlatformData['id'])
                         ->setName($gamePlatformData['name']);
                     $entityManager->persist($gamePlatform);
-                }else{
+                } else {
                     $this->addFlash('success', 'pas de nouvelle plateforme à ajouter');
                 }
             }
@@ -284,14 +282,14 @@ class ApiController extends AbstractController
 
             // Message de succès
             $this->addFlash('success', 'Les plateformes ont correctement été récupérées.');
-        } catch (TransportExceptionInterface | ClientExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | DecodingExceptionInterface $e) {
+        } catch (TransportExceptionInterface|ClientExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface|DecodingExceptionInterface $e) {
             $this->handleError('Une erreur est survenue lors de la récupération des plateformes', $e);
         } catch (\Exception $e) {
             $this->handleError('Une erreur inattendue est survenue lors de la récupération des plateformes', $e);
         }
         //$this->get('session')->getFlashBag()->add('success', 'Message ajouté');
         // Redirection vers le tableau de bord admin
-         return $this->redirectToRoute('admin_dashboard');
+        return $this->redirectToRoute('admin_dashboard');
     }
 
     /**

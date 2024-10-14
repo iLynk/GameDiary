@@ -1,7 +1,24 @@
 @import '_variables.scss';
 body {
+    h1{
+        text-align: center;
+    }
     background-color: $primary-blue;
     color: $cream;
-    text-align: center;
     font-family: $font-family-game;
+    img{
+        width: 50px;
+        height:50px;
+    }
+    .stars {
+        display: inline-block;
+    }
+    .star {
+        font-size: 30px;
+        color: #ccc;
+        cursor: pointer;
+    }
+    .star.selected {
+        color: gold;
+    }
 }

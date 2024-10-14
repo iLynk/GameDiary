@@ -7,13 +7,18 @@ Encore
     .setPublicPath('/build')
     // Ajouter des fichiers d'entrée (JS ou CSS/SCSS)
     .addEntry('app', './assets/js/app.js')
-    .addEntry('main_js', './assets/js/app.js')
     // Correction : Nom unique pour chaque fichier CSS généré
     .addStyleEntry('app_styles', './assets/styles/app.scss')
     .addStyleEntry('admin_styles', './assets/styles/admin.scss')
     .addStyleEntry('login_styles', './assets/styles/login.scss')
     .addStyleEntry('navbar_styles', './assets/styles/navbar.scss')
     .addStyleEntry('register_styles', './assets/styles/register.scss')
+
+    // Configurer les options de surveillance pour Webpack Watcher
+    .configureWatchOptions(function(watchOptions) {
+        watchOptions.poll = 1000; // Re-vérifie les fichiers toutes les secondes
+        watchOptions.ignored = /node_modules/; // Ignore les fichiers dans node_modules
+    })
 
     // Active le traitement des fichiers SCSS
     .enableSassLoader()
@@ -33,4 +38,5 @@ Encore
     .enableSingleRuntimeChunk()
 ;
 
+// Exporter la configuration Webpack
 module.exports = Encore.getWebpackConfig();

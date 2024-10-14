@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241008134217 extends AbstractMigration
+final class Version20241014102409 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,14 +20,12 @@ final class Version20241008134217 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE game ADD api_id INT NOT NULL');
-        $this->addSql('ALTER TABLE game_category ADD api_id INT NOT NULL');
+        $this->addSql('ALTER TABLE game CHANGE release_date release_date DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE game DROP api_id');
-        $this->addSql('ALTER TABLE game_category DROP api_id');
+        $this->addSql('ALTER TABLE game CHANGE release_date release_date DATETIME NOT NULL');
     }
 }
