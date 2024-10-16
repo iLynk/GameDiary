@@ -4,10 +4,17 @@
 namespace App\Controller;
 
 use App\Entity\Game;
+use App\Entity\Review;
+use App\Entity\User;
+use App\Form\ReviewType;
 use App\Repository\GameCategoryRepository;
 use App\Repository\GameRepository;
+use App\Repository\ReviewRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -23,16 +30,28 @@ class GameController extends AbstractController
         // Retourne la vue avec les jeux
         return $this->render('game/index.html.twig', [
             'games' => $games,
-            'categories' => $categories
+            'categories' => $categories,
         ]);
     }
 
     #[Route('/games/{slug}', name: 'app_game_show', methods: ['GET'])]
-    public function show(#[MapEntity(mapping: ['slug' => 'slug'])] Game $game): Response
+    public function show(#[MapEntity(mapping: ['slug' => 'slug'])] Game $game, ReviewRepository $reviewRepository): Response
     {
-        $form = ReviewType::class;
+        $user = $this->getUser();
+
+        $hasReviewed = false;
+        if ($user) {
+            $hasReviewed = $reviewRepository->findOneBy([
+                    'user' => $user,
+                    'game' => $game
+                ]) !== null;
+        }
+        $form = $this->createForm(reviewType::class);
         return $this->render('game/show.html.twig', [
             'game' => $game,
+            'hasReviewed' => $hasReviewed,
+            'form' => $form,
+            'reviews' => $game->getReviews()
         ]);
     }
 }

@@ -26,7 +26,7 @@
                 <img src="{{ game.cover }}" alt="image du jeu {{ game.name }}">
                     <p class="game-name">{{ game.name }}</p>
                 </a>
-                <p>({{ game.releasedate|date('d-m-Y') }})</p>
+                    <p>({{ game.releasedate|date('d-m-Y') }})</p>
             </div>
         {% endfor %}
         {% else %}

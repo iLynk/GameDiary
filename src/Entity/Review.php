@@ -26,9 +26,6 @@ class Review
     private ?bool $completed = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $publishedAt = null;
-
-    #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'reviews')]
@@ -44,6 +41,9 @@ class Review
      */
     #[ORM\OneToMany(targetEntity: Vote::class, mappedBy: 'review', orphanRemoval: true)]
     private Collection $votes;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function __construct()
     {
@@ -91,17 +91,7 @@ class Review
         return $this;
     }
 
-    public function getPublishedAt(): ?\DateTimeImmutable
-    {
-        return $this->publishedAt;
-    }
 
-    public function setPublishedAt(\DateTimeImmutable $publishedAt): static
-    {
-        $this->publishedAt = $publishedAt;
-
-        return $this;
-    }
 
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
@@ -165,6 +155,18 @@ class Review
                 $vote->setReview(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

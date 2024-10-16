@@ -8,7 +8,7 @@
         <h1>{{ game.name }}</h1>
     </div>
     {% if game %}
-    <section class="game-details">
+        <section class="game-details">
         <div class="game">
             <img src="{{ game.cover }}" alt="image du jeu {{ game.name }}">
             <p class="game-name">{{ game.name }}</p>
@@ -27,11 +27,51 @@
                 {% endfor %}
             </ul>
             {% if app.user %}
+                {% if hasReviewed %}
+                    <p>Désolé, mais vous avez déjà noté ce jeu, pourquoi ne pas modifier votre avis ?</p>
+                {% else %}
                     <button class="show-review-form">NOTE LE JEU !</button>
+
+                    <div id="review-form" style="display: none;">
+                        {{ form_start(form, {'action': path('app_game_review', {'slug': game.slug})}) }}
+
+                        <div class="rating-stars">
+                            <span>Votre note :</span>
+                            {% for i in 1..5 %}
+                                <span class="star" data-value="{{ i }}">★</span>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Champ caché pour stocker la note -->
+                        {{ form_widget(form.rate, {'attr': {'style': 'display:none'}}) }}
+
+                        {{ form_end(form) }}
+                    </div>
+                {% endif %}
             {% endif %}
+            <div id="reviews-list">
+                {% for review in reviews %}
+                    <div class="review">
+                        <p>{{ review.user.name }}</p>
+                        <p>{{ review.rate }}{{ ux_icon('line-md:star-alt-filled') }}</p>
+                        {% if review.comment %}
+                            <p>{{ review.comment }}</p>
+                        {% endif %}
+                        {% if review.completed != 0 %}
+                            <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
+                        {% else %}
+                            <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
+                        {% endif %}
+
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-        {% else %}
-            <p>Désolé, ce jeu n'est pas disponible</p>
-        {% endif %}
+    {% else %}
+        <p>Désolé, ce jeu n'est pas disponible</p>
+    {% endif %}
     </section>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('js/rateForm.js') }}"></script>
 {% endblock %}

@@ -2,7 +2,7 @@
 
 body {
   h1,
-  h2{
+  h2 {
     text-align: center;
     font-size: 2em;
   }
@@ -10,28 +10,39 @@ body {
   background-color: $primary-blue;
   color: $cream;
   font-family: $font-family-game;
-  .welcome{
+
+  .welcome {
     color: white;
     text-align: center;
     font-size: large;
   }
+svg{
+  height: 15px;
+}
   img {
     width: 150px;
     height: 190px;
   }
 
-  .stars {
-    display: inline-block;
-  }
+  #review-form {
 
-  .star {
-    font-size: 30px;
-    color: #ccc;
-    cursor: pointer;
-  }
+    .rating-stars {
+      display: inline-block;
+    }
 
-  .star.selected {
-    color: gold;
+    .star {
+      font-size: 30px;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    /* Lorsque l'étoile est sélectionnée (après clic) */
+    .star.selected {
+      color: gold;
+    }
+
+
   }
 
 
@@ -53,6 +64,10 @@ body {
         border: 1px solid white;
       }
 
+      img:hover {
+        scale: 1.1;
+      }
+
       .game-name {
         font-weight: bold;
         color: $rink;
@@ -72,6 +87,7 @@ footer {
 
   a {
     text-decoration: none;
+
     p {
       text-align: right;
       padding-right: 10px;
