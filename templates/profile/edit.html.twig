@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier vos informations{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('build/register_styles.css') }}">
+{% endblock %}
+
+{% block body %}
+    <h1 class="h3 mb-3 font-weight-normal">Modifier vos informations </h1>
+    <h2>{{ ux_icon('emojione:warning') }}Tous les champs doivent être remplis !<br>Si vous souhaitez modifier votre
+        e-mail, merci de contacter un administrateur</h2>
+    <div class="user-form">
+        {{ form_start(form) }}
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('js/formValidator.js') }}"></script>
+{% endblock %}

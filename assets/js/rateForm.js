@@ -69,6 +69,7 @@ form.addEventListener('submit', function (event) {
             if (data.success) {
 
                 alert(data.message);
+                location.reload();
             } else {
                 alert('Erreur : ' + data.errors);
             }

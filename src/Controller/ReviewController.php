@@ -13,12 +13,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
 class ReviewController extends AbstractController
 {
     #[Route('/games/{slug}/review', name: 'app_game_review', methods: ['POST'])]
-// FONCTION POUR AJOUTER UN AVIS
+    #[IsGranted("ROLE_USER")]
+    // FONCTION POUR AJOUTER UN AVIS
     public function addReview(
         #[MapEntity(mapping: ['slug' => 'slug'])] Game $game, Request $request, EntityManagerInterface $entityManager, ReviewRepository $reviewRepository): JsonResponse
     {
@@ -71,6 +73,30 @@ class ReviewController extends AbstractController
             'success' => false,
             'errors' => (string)$form->getErrors(true),
         ], Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('review/edit/{id}', name: 'app_review_edit', methods: ['GET', 'POST'])]
+    #[IsGranted("ROLE_USER")]
+    public function editReview(#[MapEntity(mapping: ['id' => 'id'])] Review $review, Request $request, EntityManagerInterface $entityManager, ReviewRepository $reviewRepository): Response
+    {
+        $review = $reviewRepository->findOneBy(['id' => $review->getId()]);
+        $form = $this->createForm(ReviewType::class, $review);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $review->setRate($form['rate']->getData())
+                ->setComment($form['comment']->getData())
+                ->setCompleted($form['completed']->getData());
+
+            $entityManager->persist($review);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_profile');
+        }
+
+        return $this->render('review/edit.html.twig', [
+            'review' => $review,
+            'form' => $form,
+        ]);
     }
 }
 

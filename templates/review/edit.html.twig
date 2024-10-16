@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier votre avis - Game Diary{% endblock %}
+{% block body %}
+
+    <h1>Modifier votre avis sur {{ review.game.name }}</h1>
+    {{ form_start(form) }}
+    {{ form_end(form) }}
+{% endblock %}

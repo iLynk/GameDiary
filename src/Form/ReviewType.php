@@ -25,13 +25,16 @@ class ReviewType extends AbstractType
         $builder
             ->add('rate', IntegerType::class, [
                 'required' => true,
+                'label' => 'Votre note',
                 'empty_data' => 0,
             ])
             ->add('comment', TextareaType::class, [
-                'required' => false
+                'required' => false,
+                'label' => 'Votre avis',
             ])
             ->add('completed', CheckboxType::class, [
-                'required' => false
+                'required' => false,
+                'label' => 'Avez-vous terminé le jeu ?',
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Envoyer mon avis'
@@ -43,9 +46,6 @@ class ReviewType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Review::class,
-            'csrf_protection' => true,
-            'csrf_field_name' => '_token',
-            'csrf_token_id' => 'review',
         ]);
     }
 }

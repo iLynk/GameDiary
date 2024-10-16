@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil - Game Diary{% endblock %}
+
+{% block body %}
+
+    <h1>Bonjour {{ user.name }} ! </h1>
+    <p>Que voulez-vous faire aujourd'hui ?</p>
+
+    <p>Nom d'utilisateur: {{ user.name }}</p>
+    <p>E-mail: {{ user.email }} </p>
+    <a href="{{ path('app_profile_edit') }}">Modifier vos informations ? {{ ux_icon('cuida:edit-outline') }}</a>
+
+    <h2>Vos Avis</h2>
+    {% for review in reviews %}
+        <div class="review">
+            <img src="{{ review.game.cover }}">
+            <p>{{ review.game.name }}</p>
+            <p>{{ review.rate }}{{ ux_icon('line-md:star-alt-filled') }}/5</p>
+            <p>{{ review.comment }}</p>
+            {% if review.completed != 0 %}
+                <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
+            {% else %}
+                <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
+            {% endif %}
+            <a href="{{ path('app_review_edit', {'id': review.id}) }}"><p>Modifier votre avis
+                    ? {{ ux_icon('cuida:edit-outline') }}</p>
+            </a>
+        </div>
+    {% endfor %}
+{% endblock %}
