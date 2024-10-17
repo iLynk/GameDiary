@@ -1,7 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}{{ game.name }}{% endblock %}
-
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('build/game_styles.css') }}">
+{% endblock %}
 {% block body %}
 
     <div class="example-wrapper">
@@ -74,4 +76,5 @@
 {% endblock %}
 {% block javascripts %}
     <script src="{{ asset('js/rateForm.js') }}"></script>
+    <script src="{{ asset('js/stars.js') }}"></script>
 {% endblock %}

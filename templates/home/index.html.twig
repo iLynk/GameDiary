@@ -5,12 +5,17 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('build/game_styles.css') }}">
 {% endblock %}
-
+{% block header %}
+    <p>test</p>
+{% endblock %}
 {% block body %}
+
     <div class="example-wrapper">
         <h1>GAME DIARY ! </h1>
+            <img class="header-image" src="{{ asset('images/header.webp') }}"
+                 alt="image de couverture montrant plein de jeux vidéos">
     </div>
-    <h2>Bienvenue sur Game Diary,<br> le site ou vous pouvez garder en mémoire, vos plus belles aventures</h2>
+    <h2>l’application qui vous permet de garder en mémoire vos souvenirs préférés</h2>
     {% if games %}
     <h3>Les derniers jeux marquants :</h3>
     <section class="games">
@@ -20,7 +25,6 @@
                     <p class="game-name">{{ game.name }}</p>
                     <img src="{{ game.cover }}" alt="image du jeu {{ game.name }}">
                 </a>
-                <p>({{ game.releasedate|date('d-m-Y') }})</p>
             </div>
         {% endfor %}
         {% else %}
@@ -29,6 +33,23 @@
     </section>
     <h4>Les derniers avis :</h4>
     <section class="reviews">
+        {% for review in reviews %}
+            <div class="review">
+                <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
+                <p>{{ review.game.name }}</p>
+                <p> Utilisateur : {{ review.user.name }}</p>
+                <p>Note : {{ review.rate }}</p>
+                {% if review.comment %}
+                    <p>Commentaire : {{ review.comment }}</p>
+                {% endif %}
+                {% if review.completed != 0 %}
+                    <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
+                {% else %}
+                    <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
+                {% endif %}
+            </div>
+            <hr>
+        {% endfor %}
     </section>
 
     <script src="{{ asset('build/main_js.js') }}"></script>

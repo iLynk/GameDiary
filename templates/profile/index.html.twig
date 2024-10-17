@@ -6,10 +6,16 @@
 
     <h1>Bonjour {{ user.name }} ! </h1>
     <p>Que voulez-vous faire aujourd'hui ?</p>
-
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
     <p>Nom d'utilisateur: {{ user.name }}</p>
     <p>E-mail: {{ user.email }} </p>
     <a href="{{ path('app_profile_edit') }}">Modifier vos informations ? {{ ux_icon('cuida:edit-outline') }}</a>
+    <a href="{{ path('app_profile_edit_password') }}">Modifier votre mot de passe? {{ ux_icon('cuida:edit-outline') }}</a>
+
 
     <h2>Vos Avis</h2>
     {% for review in reviews %}

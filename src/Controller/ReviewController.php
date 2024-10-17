@@ -98,5 +98,21 @@ class ReviewController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    #[Route('/review/delete/{id}', name: 'app_review_delete', methods: ['POST'])]
+    #[IsGranted("ROLE_USER")]
+    public function delete(#[MapEntity(mapping: ['id' => 'id'])] Review $review, ReviewRepository $reviewRepository, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $review = $reviewRepository->findOneBy(['id' => $review->getid()]);
+        $entityManager->remove($review);
+        $entityManager->flush();
+
+        $referer = $request->headers->get('referer');
+        if($referer && str_contains($referer, "/admin")) {
+            return $this->redirectToRoute('admin_dashboard');
+        }
+        $this->addFlash('success', 'Votre compte à bien été supprimé');
+        return $this->redirectToRoute('app_home');
+    }
 }
 

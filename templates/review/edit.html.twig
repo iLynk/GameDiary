@@ -5,5 +5,18 @@
 
     <h1>Modifier votre avis sur {{ review.game.name }}</h1>
     {{ form_start(form) }}
+
+    <div class="rating-stars">
+        <span>Votre note :</span>
+        {% for i in 1..5 %}
+            <span class="star" data-value="{{ i }}">★</span>
+        {% endfor %}
+    </div>
+    <!-- Champ caché pour stocker la note -->
+    {{ form_widget(form.rate, {'attr': {'style': 'display:none'}}) }}
+
     {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('js/stars.js') }}"></script>
 {% endblock %}

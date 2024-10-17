@@ -14,13 +14,40 @@
             long !)
         </button>
     </div>
-    <p>{{ ux_icon('ci:circle-warning') }} l'ordre des requêtes a son importance <em>(vous ne pouvez pas charger les jeux avant d'avoir chargé les catégories/plateformes)</em></p>
+    <p>{{ ux_icon('ci:circle-warning') }} l'ordre des requêtes a son importance <em>(vous ne pouvez pas charger les jeux
+            avant d'avoir chargé les catégories/plateformes)</em></p>
 
     <div class="moderation">
-        <a href="">
-            <h3>Bannir un utilisateur ?</h3>
-            <h4>Supprimer un avis publié ?</h4>
-        </a>
+        <h3>Bannir un utilisateur ?</h3>
+        {% for user in users %}
+            <div>
+                <p>{{ user.name }}</p>
+                <p>{{ user.email }}</p>
+                <form class="delete-form" method="post" action="{{ path('app_profile_delete', {'id': user.id}) }}"
+                      onsubmit="return confirm('Voulez vous vraiment supprimer ce compte ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+
+                    <button class="btn">Supprimer cet utilisateur</button>
+                </form>
+            </div>
+        {% endfor %}
+        <h4>Supprimer un avis publié ?</h4>
+        {% for review in reviews %}
+            <div class="review">
+                <p>Avis de {{ review.user.name }}</p>
+                <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
+                <p>{{ review.game.name }}</p>
+                <p>{{ review.rate }}</p>
+                <p>{{ review.comment }}</p>
+                <p>{{ review.completed }}</p>
+                <form class="delete-form" method="post" action="{{ path('app_review_delete', {'id': review.id}) }}"
+                      onsubmit="return confirm('Voulez vous vraiment supprimer cet avis ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
+
+                    <button class="btn">Supprimer cet avis</button>
+                </form>
+            </div>
+        {% endfor %}
     </div>
     <div class="loader">
         <img src="images/loader.gif" alt="image de chargement" class="not-visible">

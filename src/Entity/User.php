@@ -41,6 +41,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     #[Assert\NotBlank(message: 'Le mot de passe ne doit pas être vide.')]
+    #[Assert\PasswordStrength([
+        'minScore' => Assert\PasswordStrength::STRENGTH_WEAK,
+        'message' => 'Votre mot de passe doit faire minimum 8 caractères avec des caractères spéciaux [@,#,!...]'
+    ])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]

@@ -7,12 +7,17 @@
 
 {% block body %}
     <h1 class="h3 mb-3 font-weight-normal">Modifier vos informations </h1>
-    <h2>{{ ux_icon('emojione:warning') }}Tous les champs doivent être remplis !<br>Si vous souhaitez modifier votre
-        e-mail, merci de contacter un administrateur</h2>
     <div class="user-form">
         {{ form_start(form) }}
         {{ form_end(form) }}
     </div>
+    <form class="delete-form" method="post" action="{{ path('app_profile_delete', {'id': user.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer votre compte ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+
+        <button class="btn">Supprimer son compte</button>
+    </form>
+
+
 
 {% endblock %}
 {% block javascripts %}

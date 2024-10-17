@@ -37,13 +37,10 @@ class SecurityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // on hache le password et on ajoute le role user
             $user->setPassword($hasher->hashPassword($user, $user->getPassword()))
-                ->setRoles(['user']);
+                ->setRoles(['ROLE_USER']);
             // on enregistre l'utilisateur
             $em->persist($user);
             $em->flush();
-
-            // on ajoute un message de succès et on connecte l'utilisateur 
-            $this->addFlash('success', 'Merci de vous être enregistré');
             return $userAuthenticator->authenticateUser(
                 $user,
                 $authenticator,

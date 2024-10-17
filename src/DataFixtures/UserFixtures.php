@@ -28,7 +28,7 @@ class UserFixtures extends Fixture
             ->setUpdatedAt(new \DateTimeImmutable());
 
         // Hacher le mot de passe
-        $hashedPassword = $this->passwordHasher->hashPassword($user, 'milhan33');
+        $hashedPassword = $this->passwordHasher->hashPassword($user, 'SuperAdmin123!@');
         $user->setPassword($hashedPassword);
         $manager->persist($user);
 
@@ -41,7 +41,7 @@ class UserFixtures extends Fixture
             ->setUpdatedAt(new \DateTimeImmutable());
 
         // Hacher le mot de passe
-        $hashedPassword = $this->passwordHasher->hashPassword($user, 'salome33');
+        $hashedPassword = $this->passwordHasher->hashPassword($user, 'SuperModerator123!@');
         $user->setPassword($hashedPassword);
         $manager->persist($user);
 
@@ -54,9 +54,10 @@ class UserFixtures extends Fixture
             ->setUpdatedAt(new \DateTimeImmutable());
 
         // Hacher le mot de passe
-        $hashedPassword = $this->passwordHasher->hashPassword($user, 'valerie33');
+        $hashedPassword = $this->passwordHasher->hashPassword($user, 'SuperUser123!@');
         $user->setPassword($hashedPassword);
         $manager->persist($user);
+
 
         // Exécuter l'insertion en base de données
         $manager->flush();

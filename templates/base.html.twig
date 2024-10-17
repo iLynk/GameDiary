@@ -7,6 +7,7 @@
     <link rel="icon" href='{{ asset('images/logo.png') }}'>
     <link rel="stylesheet" href="{{ asset('build/navbar_styles.css') }}">
     <link rel="stylesheet" href="{{ asset('build/app_styles.css') }}">
+
     {% block stylesheets %}
     {% endblock %}
 </head>
@@ -16,8 +17,6 @@
 </header>
 
 {% block body %}{% endblock %}
-
-<!-- Ton script doit être ici, juste avant la fermeture de la balise body -->
 <script src="{{ asset('js/main.js') }}"></script>
 {% block javascripts %}
 {% endblock %}
@@ -26,6 +25,9 @@
     <hr>
     <p>FORT MILHAN</p>
     <p>GAME DIARY | 2024</p>
+    <a href="">{{ ux_icon('ic:baseline-discord') }}</a>
+    <a href="">{{ ux_icon('mdi:twitter') }}</a>
+    <a href="">{{ ux_icon('mdi:twitch') }}</a>
     <a href="/mentions-legales">
         <p>Mentions légales</p>
 </footer>
