@@ -2,79 +2,92 @@
 
 {% block title %}{{ game.name }}{% endblock %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('build/game_styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/game_styles_details.css') }}">
 {% endblock %}
 {% block body %}
 
-    <div class="example-wrapper">
-        <h1>{{ game.name }}</h1>
-    </div>
     {% if game %}
         <section class="game-details">
-        <div class="game">
-            <img src="{{ game.cover }}" alt="image du jeu {{ game.name }}">
-            <p class="game-name">{{ game.name }}</p>
-            <p>({{ game.releasedate|date('d-m-Y') }})</p>
-            <p>{{ game.storyline }}
-            <p>Catégories : </p>
-            <ul>
-                {% for category in game.gameCategories %}
-                    <li>{{ category.name }}</li>
-                {% endfor %}
-            </ul>
-            <p>Disponible sur </p>
-            <ul>
-                {% for platform in game.gamePlatforms %}
-                    <li>{{ platform.name }}</li>
-                {% endfor %}
-            </ul>
+
+            <div class="game">
+                <h1>{{ game.name }}</h1>
+
+                <img src="{{ game.cover }}" alt="image du jeu {{ game.name }}">
+                {% if userList and not userList.getGames().contains(game) %}
+                    <form class="add-fav" method="post" action="{{ path('app_list_add', {'id': game.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('add' ~ game.id) }}">
+                        <button class="addlist">{{ ux_icon('mdi:heart-outline') }}</button>
+                    </form>
+                    {% else %}
+                        <form class="delete-fav" method="post" action="{{ path('app_list_delete', {'id': game.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('add' ~ game.id) }}">
+                            <button class="deletelist">{{ ux_icon('mdi:heart-off-outline') }}</button>
+                        </form>
+                {% endif %}
+                {% include "/_partials/_flashes.html.twig" %}
+                <p>{{ game.name }} est sorti le : {{ game.releasedate|date('d-m-Y') }}</p>
+
+                <p>
+                    {% for category in game.gameCategories %}
+                        <span class="category">{{ category.name }}  </span>
+                    {% endfor %}
+                </p>
+                <p>Disponible sur </p>
+                <ul>
+                    {% for platform in game.gamePlatforms %}
+                        <li>{{ platform.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+        <section class="game-rate">
             {% if app.user %}
                 {% if hasReviewed %}
-                    <p>Désolé, mais vous avez déjà noté ce jeu, pourquoi ne pas modifier votre avis ?</p>
+                    <p>Désolé, mais vous avez déjà noté ce jeu !</p>
                 {% else %}
                     <button class="show-review-form">NOTE LE JEU !</button>
-
                     <div id="review-form" style="display: none;">
                         {{ form_start(form, {'action': path('app_game_review', {'slug': game.slug})}) }}
-
                         <div class="rating-stars">
                             <span>Votre note :</span>
                             {% for i in 1..5 %}
                                 <span class="star" data-value="{{ i }}">★</span>
                             {% endfor %}
                         </div>
-
                         <!-- Champ caché pour stocker la note -->
                         {{ form_widget(form.rate, {'attr': {'style': 'display:none'}}) }}
-
                         {{ form_end(form) }}
                     </div>
                 {% endif %}
             {% endif %}
-            <div id="reviews-list">
-                {% for review in reviews %}
-                    <div class="review">
-                        <p>{{ review.user.name }}</p>
-                        <p>{{ review.rate }}{{ ux_icon('line-md:star-alt-filled') }}</p>
-                        {% if review.comment %}
-                            <p>{{ review.comment }}</p>
-                        {% endif %}
-                        {% if review.completed != 0 %}
-                            <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
-                        {% else %}
-                            <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
-                        {% endif %}
+        </section>
+        <h2>Les derniers avis :</h2>
+        <div id="reviews-list">
+            {% for review in reviews %}
+                <div class="review">
+                    <p>{{ review.user.name }} : <span>{{ review.rate }}★</span></p>
 
-                    </div>
-                {% endfor %}
-            </div>
+                    {% if review.comment %}
+                        <p>{{ review.comment }}</p>
+                    {% endif %}
+                    {% if review.completed != 0 %}
+                        <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
+                    {% else %}
+                        <p>Jeu non terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
+                    {% endif %}
+                    {% if app.user != review.user %}
+                        <button class="like">{{ ux_icon('mdi:like') }}</button>
+                        <button class="dislike">{{ ux_icon('mdi:dislike') }}</button>
+                    {% endif %}
+                </div>
+            {% endfor %}
         </div>
     {% else %}
         <p>Désolé, ce jeu n'est pas disponible</p>
     {% endif %}
-    </section>
+
 {% endblock %}
 {% block javascripts %}
-    <script src="{{ asset('js/rateForm.js') }}"></script>
     <script src="{{ asset('js/stars.js') }}"></script>
+    <script src="{{ asset('js/rateForm.js') }}"></script>
 {% endblock %}

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Game;
 use App\Entity\Review;
+use App\Entity\Vote;
 use App\Form\ReviewType;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -108,11 +109,49 @@ class ReviewController extends AbstractController
         $entityManager->flush();
 
         $referer = $request->headers->get('referer');
+        $this->addFlash('success', 'Votre avis à bien été supprimé');
         if($referer && str_contains($referer, "/admin")) {
             return $this->redirectToRoute('admin_dashboard');
+        }else{
+            return $this->redirectToRoute('app_profile');
         }
-        $this->addFlash('success', 'Votre compte à bien été supprimé');
-        return $this->redirectToRoute('app_home');
     }
+
+    #[Route('/vote/{id}/{type}', name: 'vote_review', methods: ['POST'])]
+    public function vote(Review $review, int $type, EntityManagerInterface $entityManager, ReviewRepository $voteRepository): JsonResponse
+    {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+        if (!$user) {
+            return new JsonResponse(['error' => 'Not logged in'], 403);
+        }
+
+        // Vérifier si l'utilisateur a déjà voté sur cette review
+        $vote = $voteRepository->findOneBy(['user' => $user, 'review' => $review]);
+
+        if ($vote) {
+            // Si l'utilisateur a déjà voté sur cette review, on met à jour le vote
+            if ($vote->getType() === $type) {
+                // Si le même vote est soumis (like sur like ou dislike sur dislike), on annule le vote
+                $entityManager->remove($vote);
+                $entityManager->flush();
+                return new JsonResponse(['success' => true, 'score' => $review->getScore()]);
+            }
+
+            // Sinon, on change le type de vote (de like à dislike ou inversement)
+            $vote->setType($type);
+        } else {
+            // Ajouter un nouveau vote si l'utilisateur n'a pas encore voté
+            $vote = new Vote();
+            $vote->setUser($user);
+            $vote->setReview($review);
+            $vote->setType($type);
+            $entityManager->persist($vote);
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true, 'score' => $review->getScore()]);
+    }
+
 }
 

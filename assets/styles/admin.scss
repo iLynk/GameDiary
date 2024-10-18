@@ -1,28 +1,42 @@
 @import '_variables.scss';
+
 body {
   background-color: $primary-blue;
   color: $cream;
   font-family: $font-family-game;
 
-  h1{
+  h1 {
+    font-size: 2.5rem;
     text-align: center;
   }
 
-  h2{
+  h2 {
     text-align: left;
     padding-left: 10px;
+    font-size: 1.2rem;
   }
-a{
-  text-decoration: none;
-  color: $cream;
-}
-  div.game_buttons{
+
+  a {
+    text-decoration: none;
+    color: $cream;
+
+
+  }
+
+  .review {
+    img {
+      width: 150px;
+      height: 150px;
+    }
+  }
+
+  div.game_buttons {
     width: 250px;
     display: flex;
     margin-left: 10px;
     flex-direction: column;
 
-    button{
+    button {
       width: 250px;
       text-align: center;
       cursor: pointer;
@@ -34,27 +48,55 @@ a{
       color: white;
       font-size: large;
     }
-    button:hover{
+
+    button:hover {
       background-color: $secondary-blue;
       color: $cream;
     }
   }
-  svg{
-    width: 45px;
-    padding: 6px;
-    vertical-align: middle;
-  }
 
-  div.loader{
-    img{
+
+  div.loader {
+    img {
       margin: 0 auto;
       width: 20%;
       height: 20%;
     }
   }
 
-  .not-visible{
+  .not-visible {
     display: none;
+  }
+
+  .moderation {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    margin: auto;
+    text-align: left;
+
+    .user,
+    .review{
+      border: 1px solid $cream;
+      border-radius: 10px;
+      padding: 0 15px 10px 15px;
+      margin-bottom: 10px;
+
+      .delete-form {
+        text-align: right;
+      }
+    }
+    span {
+      color: white;
+    }
+    button {
+      background-color: transparent;
+      border: none;
+      text-align: right;
+      svg {
+        color: #983333;
+      }
+    }
   }
 
 }

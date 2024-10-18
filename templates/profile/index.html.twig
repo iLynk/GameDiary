@@ -1,7 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Mon Profil - Game Diary{% endblock %}
-
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('build/profile.css') }}">
+{% endblock %}
 {% block body %}
 
     <h1>Bonjour {{ user.name }} ! </h1>
@@ -11,27 +13,54 @@
             {{ message }}
         </div>
     {% endfor %}
-    <p>Nom d'utilisateur: {{ user.name }}</p>
-    <p>E-mail: {{ user.email }} </p>
-    <a href="{{ path('app_profile_edit') }}">Modifier vos informations ? {{ ux_icon('cuida:edit-outline') }}</a>
-    <a href="{{ path('app_profile_edit_password') }}">Modifier votre mot de passe? {{ ux_icon('cuida:edit-outline') }}</a>
+    <div class="infos">
+        <p>Nom d'utilisateur: <span>{{ user.name }}</span></p>
+        <p>E-mail: <span>{{ user.email }} </span></p>
+        <a href="{{ path('app_profile_edit') }}">Modifier vos informations ? {{ ux_icon('cuida:edit-outline') }}</a>
+        <a href="{{ path('app_profile_edit_password') }}">Modifier votre mot de
+            passe? {{ ux_icon('cuida:edit-outline') }}</a>
+    </div>
 
+    <div id="reviews-list">
+        <h2>Vos Avis</h2>
+        {% for review in reviews %}
+            <div class="review">
+                <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
+                <p>Jeu : <span>{{ review.game.name }}</span></p>
+                <p>Note : <span>{{ review.rate }}★/5</span></p>
+                {% if review.comment %}
+                    <p>Commentaire : <span>{{ review.comment }}</span></p>
+                {% endif %}
+                {% if review.completed != 0 %}
+                    <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
+                {% else %}
+                    <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
+                {% endif %}
+                <a href="{{ path('app_review_edit', {'id': review.id}) }}"><p>Modifier votre avis
+                        ? {{ ux_icon('cuida:edit-outline') }}</p></a>
+                <form class="delete-form" method="post" action="{{ path('app_review_delete', {'id': review.id}) }}"
+                      onsubmit="return confirm('Voulez-vous vraiment supprimer cet avis ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
+                    <button class="btn">{{ ux_icon('fa6-solid:trash-can') }}</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
 
-    <h2>Vos Avis</h2>
-    {% for review in reviews %}
-        <div class="review">
-            <img src="{{ review.game.cover }}">
-            <p>{{ review.game.name }}</p>
-            <p>{{ review.rate }}{{ ux_icon('line-md:star-alt-filled') }}/5</p>
-            <p>{{ review.comment }}</p>
-            {% if review.completed != 0 %}
-                <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
+    <section class="favList">
+        <h3>Votre Liste</h3>
+{#        {{ dump(userList.games) }}#}
+
+        {% if userList %}
+            {% for game in userList.games %}
+                <div class="game">
+                    <img src="{{ game.cover }}" alt="image de couverture du jeu {{ game.name }}">
+                    <p>{{ game.name }}</p>
+                </div>
             {% else %}
-                <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
-            {% endif %}
-            <a href="{{ path('app_review_edit', {'id': review.id}) }}"><p>Modifier votre avis
-                    ? {{ ux_icon('cuida:edit-outline') }}</p>
-            </a>
-        </div>
-    {% endfor %}
+                <p>Aucun jeu dans votre liste.</p>
+            {% endfor %}
+        {% endif %}
+    </section>
+
 {% endblock %}

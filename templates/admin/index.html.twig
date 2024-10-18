@@ -14,41 +14,6 @@
             long !)
         </button>
     </div>
-    <p>{{ ux_icon('ci:circle-warning') }} l'ordre des requêtes a son importance <em>(vous ne pouvez pas charger les jeux
-            avant d'avoir chargé les catégories/plateformes)</em></p>
-
-    <div class="moderation">
-        <h3>Bannir un utilisateur ?</h3>
-        {% for user in users %}
-            <div>
-                <p>{{ user.name }}</p>
-                <p>{{ user.email }}</p>
-                <form class="delete-form" method="post" action="{{ path('app_profile_delete', {'id': user.id}) }}"
-                      onsubmit="return confirm('Voulez vous vraiment supprimer ce compte ?');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-
-                    <button class="btn">Supprimer cet utilisateur</button>
-                </form>
-            </div>
-        {% endfor %}
-        <h4>Supprimer un avis publié ?</h4>
-        {% for review in reviews %}
-            <div class="review">
-                <p>Avis de {{ review.user.name }}</p>
-                <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
-                <p>{{ review.game.name }}</p>
-                <p>{{ review.rate }}</p>
-                <p>{{ review.comment }}</p>
-                <p>{{ review.completed }}</p>
-                <form class="delete-form" method="post" action="{{ path('app_review_delete', {'id': review.id}) }}"
-                      onsubmit="return confirm('Voulez vous vraiment supprimer cet avis ?');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
-
-                    <button class="btn">Supprimer cet avis</button>
-                </form>
-            </div>
-        {% endfor %}
-    </div>
     <div class="loader">
         <img src="images/loader.gif" alt="image de chargement" class="not-visible">
         <p class="not-visible">La requête est en cours, veuillez patienter !</p>
@@ -56,7 +21,47 @@
     <div class="success-message not-visible">
         <p>Les éléments ont correctement été récupérés !</p>
     </div>
+    <p>{{ ux_icon('ci:circle-warning') }} l'ordre des requêtes a son importance <em>(vous ne pouvez pas charger les jeux
+            avant d'avoir chargé les catégories/plateformes)</em></p>
 
+    <div class="moderation">
+        <h3>Bannir un utilisateur ?</h3>
+        {% for user in users %}
+            <div class="user">
+                <p>Nom : <span>{{ user.name }}</span></p>
+                <p>Mail : <span>{{ user.email }}</span></p>
+                <form class="delete-form" method="post" action="{{ path('app_profile_delete', {'id': user.id}) }}"
+                      onsubmit="return confirm('Voulez vous vraiment supprimer ce compte ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+
+                    <button class="delete">{{ ux_icon('fa6-solid:trash-can') }}</button>
+                </form>
+            </div>
+        {% endfor %}
+        <h4>Supprimer un avis publié ?</h4>
+        {% for review in reviews %}
+            <div class="review">
+                <p>Avis de <span>{{ review.user.name }}</span></p>
+                <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
+                <p>Jeu : <span>{{ review.game.name }}</span></p>
+                <p>Note : <span>{{ review.rate }}★/5</span></p>
+                {% if review.comment %}
+                    <p>Commentaire : <span>{{ review.comment }}</span></p>
+                {% endif %}
+                {% if review.completed != 0 %}
+                    <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
+                {% else %}
+                    <p>Jeu non terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
+                {% endif %}
+                <form class="delete-form" method="post" action="{{ path('app_review_delete', {'id': review.id}) }}"
+                      onsubmit="return confirm('Voulez vous vraiment supprimer cet avis ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
+
+                    <button class="btn">{{ ux_icon('fa6-solid:trash-can') }}</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block javascripts %}

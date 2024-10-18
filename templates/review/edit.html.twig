@@ -1,21 +1,28 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Modifier votre avis - Game Diary{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('build/game_styles_details.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/profile.css') }}">
+{% endblock %}
 {% block body %}
 
     <h1>Modifier votre avis sur {{ review.game.name }}</h1>
-    {{ form_start(form) }}
+    <section class="game-rate">
+        {{ form_start(form) }}
+        <div id="review-form">
+            <div class="rating-stars">
+                <span>Votre note :</span>
+                {% for i in 1..5 %}
+                    <span class="star" data-value="{{ i }}">★</span>
+                {% endfor %}
+            </div>
+            <!-- Champ caché pour stocker la note -->
+            {{ form_widget(form.rate, {'attr': {'style': 'display:none'}}) }}
 
-    <div class="rating-stars">
-        <span>Votre note :</span>
-        {% for i in 1..5 %}
-            <span class="star" data-value="{{ i }}">★</span>
-        {% endfor %}
-    </div>
-    <!-- Champ caché pour stocker la note -->
-    {{ form_widget(form.rate, {'attr': {'style': 'display:none'}}) }}
-
-    {{ form_end(form) }}
+            {{ form_end(form) }}
+        </div>
+    </section>
 {% endblock %}
 {% block javascripts %}
     <script src="{{ asset('js/stars.js') }}"></script>

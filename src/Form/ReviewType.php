@@ -30,14 +30,20 @@ class ReviewType extends AbstractType
             ])
             ->add('comment', TextareaType::class, [
                 'required' => false,
-                'label' => 'Votre avis',
+                'label' => 'Votre avis : ',
+                'attr' => [
+                    'class' => 'comment',
+                ]
             ])
             ->add('completed', CheckboxType::class, [
                 'required' => false,
-                'label' => 'Avez-vous terminé le jeu ?',
+                'label' => 'Avez-vous terminé le jeu ? ',
+                'attr' => [
+                    'class' => 'checkbox',
+                ]
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Envoyer mon avis'
+                'label' => 'Envoyer mon avis',
             ])
         ->addEventListener(FormEvents::POST_SUBMIT, $this->dateTrait());
     }

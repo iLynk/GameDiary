@@ -62,7 +62,7 @@ body {
 
   /* Lorsque l'étoile est sélectionnée (après clic) */
   .star.selected {
-    color: gold;
+      color: gold;
   }
 
 
@@ -103,6 +103,26 @@ body {
       }
     }
   }
+
+  #scrollToTopBtn {
+    display: none;
+    position: fixed;
+    background-color: #4b537a;
+    border: 3px solid $cream;
+    border-radius: 150px;
+    right: 30px;
+    bottom: 30px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+  }
+
+  .alert-danger{
+    color: #fc8888;
+  }
+  .alert-success{
+    color: #80b080;
+  }
 }
 
 footer {
@@ -123,6 +143,4 @@ footer {
       color: $rink;
     }
   }
-
-
 }

@@ -10,6 +10,7 @@ use App\Form\ReviewType;
 use App\Repository\GameCategoryRepository;
 use App\Repository\GameRepository;
 use App\Repository\ReviewRepository;
+use App\Repository\UserListRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,23 +36,26 @@ class GameController extends AbstractController
     }
 
     #[Route('/games/{slug}', name: 'app_game_show', methods: ['GET'])]
-    public function show(#[MapEntity(mapping: ['slug' => 'slug'])] Game $game, ReviewRepository $reviewRepository): Response
+    public function show(#[MapEntity(mapping: ['slug' => 'slug'])] Game $game, ReviewRepository $reviewRepository, UserListRepository $userListRepository): Response
     {
         $user = $this->getUser();
-
         $hasReviewed = false;
+        $userList = null;
+
         if ($user) {
             $hasReviewed = $reviewRepository->findOneBy([
                     'user' => $user,
                     'game' => $game
                 ]) !== null;
+            $userList = $userListRepository->findOneBy(['user' => $user]);
         }
         $form = $this->createForm(reviewType::class);
         return $this->render('game/show.html.twig', [
             'game' => $game,
             'hasReviewed' => $hasReviewed,
             'form' => $form,
-            'reviews' => $game->getReviews()
+            'reviews' => $game->getReviews(),
+            'userList' => $userList,
         ]);
     }
 }

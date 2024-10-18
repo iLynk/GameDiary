@@ -34,14 +34,20 @@ body {
     background-color: #2d345b;
     color: white;
   }
-
+.search-filter{
+  display: flex;
+  justify-content: left;
   #search-game{
     width: 200px;
+    height: 2.5rem;
     padding: 5px;
     margin: 15px;
     border-radius: 7px;
     border: 1px solid $cream;
     background-color: $primary-blue;
     color: $cream;
+
   }
+}
+
 }

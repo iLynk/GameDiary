@@ -18,7 +18,7 @@ class UserList
     /**
      * @var Collection<int, Game>
      */
-    #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'userLists')]
+    #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'userLists', fetch: 'EAGER')]
     private Collection $games;
 
     #[ORM\OneToOne(inversedBy: 'userList', cascade: ['persist', 'remove'])]

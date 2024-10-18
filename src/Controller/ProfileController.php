@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\UserListRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -21,13 +22,15 @@ class ProfileController extends AbstractController
 
     #[Route('/profile', name: 'app_profile', methods: ['GET'])]
     #[IsGranted("ROLE_USER")]
-    public function index(User $user): Response
+    public function index(User $user, UserListRepository $userListRepository): Response
     {
         $user = $this->getUser();
         $reviews = $user->getReviews();
+        $userList = $userListRepository->findOneBy(['user' => $user]);
         return $this->render('profile/index.html.twig', [
             'user' => $user,
-            'reviews' => $reviews
+            'reviews' => $reviews,
+            'userList' => $userList
         ]);
     }
 

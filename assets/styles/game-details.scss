@@ -1,0 +1,154 @@
+@import 'variables.scss';
+
+body {
+  text-align: unset;
+
+  h1 {
+    font-size: 2.5rem;
+    text-align: center;
+  }
+
+  .game-details {
+    display: flex;
+    justify-content: center;
+    padding: 0 10px;
+
+    .game {
+      img {
+        width: 280px;
+        height: 350px;
+        border: 1px solid white;
+      }
+
+      font-size: 18px;
+
+      span,
+      li {
+        border: 1px solid white;
+        padding: 5px;
+        margin: 3px;
+        border-radius: 8px;
+        background-color: #2c3556;
+        color: white;
+        width: fit-content;
+
+        &:hover {
+          background-color: $primary-blue;
+          color: $cream;
+        }
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      button.addlist{
+        background-color: transparent;
+        border: none;
+      }
+      button.deletelist{
+        background-color: transparent;
+        border: none;
+      }
+    }
+
+  }
+
+  .game-rate {
+    text-align: center;
+    justify-content: center;
+    padding-bottom: 30px;
+
+    .show-review-form {
+      padding: 10px;
+      background-color: $primary-blue;
+      color: $cream;
+      margin-top: 10px;
+      border: 2px solid white;
+      border-radius: 10px;
+
+      &:hover {
+        background-color: $secondary-blue;
+      }
+    }
+
+    div#review-form {
+
+      form {
+        display: flex;
+        flex-direction: column;
+
+        input {
+          padding: 6px;
+        }
+
+        label {
+          font-size: 19px;
+        }
+
+        .comment {
+          vertical-align: top;
+          border-radius: 7px
+        }
+
+        button[type=submit] {
+          background-color: #2c3556;
+          border: 1px solid white;
+          border-radius: 5px;
+          color: $cream;
+          padding: 5px 10px;
+          margin: 5px 10px;
+          font-size: 17px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  h2 {
+    padding-bottom: 6px;
+  }
+
+  #reviews-list {
+    padding: 0 7px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .review {
+
+      border: 1px solid white;
+      border-radius: 5px;
+      padding: 6px;
+      margin: 3px;
+
+      p:first-child {
+
+        span {
+          color: white;
+        }
+
+      }
+
+      button {
+        background: none;
+        border: none;
+        cursor: pointer;
+
+      }
+
+      button.like {
+        svg {
+          color: #7aa0c4;
+        }
+      }
+
+      button.dislike {
+        svg {
+          color: #d25b5b;
+        }
+      }
+    }
+  }
+}

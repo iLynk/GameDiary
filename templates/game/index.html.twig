@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Bienvenue dans la page des jeux!</h1>
+    <h1>Retrouvez vos jeux préférés !</h1>
     {% if games %}
     <div class="categories-list">
         {% for category in categories %}
@@ -14,19 +14,21 @@
         {% endfor %}
     </div>
     <p class="reset-category-filter" onclick="filterCategories('')">Enlever le filtre</p>
-    <label for="search-game">
-        <input type="text" id="search-game" placeholder="Rechercher un jeu par son nom" onkeyup="filterGames()"
-               autofocus/>
-    </label>
+    <div class="search-filter">
+        <label for="search-game">
+            <input type="text" id="search-game" placeholder="Rechercher un jeu par son nom" onkeyup="filterGames()"
+                   autofocus/>
+        </label>
+    </div>
     <section class="games">
         {% for game in games %}
             <div class="game"
                  data-categories="{% for category in game.gameCategories %}{{ category.name | join(',') }} {% endfor %}">
                 <a href="{{ path('app_game_show', {'slug': game.slug}) }}">
-                <img src="{{ game.cover }}" alt="image du jeu {{ game.name }}">
+                    <img src="{{ game.cover }}" alt="image du jeu {{ game.name }}">
                     <p class="game-name">{{ game.name }}</p>
                 </a>
-                    <p>({{ game.releasedate|date('d-m-Y') }})</p>
+                <p>({{ game.releasedate|date('d-m-Y') }})</p>
             </div>
         {% endfor %}
         {% else %}

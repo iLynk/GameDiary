@@ -8,13 +8,15 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: VoteRepository::class)]
 class Vote
 {
+    const LIKE = 1;
+    const DISLIKE = -1;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?bool $positive = null;
+    #[ORM\Column(type: 'smallint')] // Champ pour stocker le type de vote (1 = like, -1 = dislike)
+    private ?int $type;
 
     #[ORM\ManyToOne(inversedBy: 'votes')]
     #[ORM\JoinColumn(nullable: false)]
@@ -29,14 +31,14 @@ class Vote
         return $this->id;
     }
 
-    public function isPositive(): ?bool
+    public function getType(): ?int
     {
-        return $this->positive;
+        return $this->type;
     }
 
-    public function setPositive(bool $positive): static
+    public function setType(int $type): self
     {
-        $this->positive = $positive;
+        $this->type = $type;
 
         return $this;
     }

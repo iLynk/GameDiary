@@ -7,6 +7,7 @@ Encore
     .setPublicPath('/build')
     // Ajouter des fichiers d'entrée (JS ou CSS/SCSS)
     .addEntry('app', './assets/js/app.js')
+    .addEntry('main', './assets/js/main.js')
     // Correction : Nom unique pour chaque fichier CSS généré
     .addStyleEntry('app_styles', './assets/styles/app.scss')
     .addStyleEntry('admin_styles', './assets/styles/admin.scss')
@@ -14,6 +15,8 @@ Encore
     .addStyleEntry('navbar_styles', './assets/styles/navbar.scss')
     .addStyleEntry('register_styles', './assets/styles/register.scss')
     .addStyleEntry('game_styles', './assets/styles/game.scss')
+    .addStyleEntry('game_styles_details', './assets/styles/game-details.scss')
+    .addStyleEntry('profile', './assets/styles/profile.scss')
 
     // Configurer les options de surveillance pour Webpack Watcher
     .configureWatchOptions(function(watchOptions) {

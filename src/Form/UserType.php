@@ -43,15 +43,14 @@ class UserType extends AbstractType
                 ]);
         }
         $builder
-            // Si c'est une création, le champ mot de passe est obligatoire
             ->add('password', $options['is_edit'] ? HiddenType::class : PasswordType::class, [
-                'label' => $options['is_edit'] ? 'Votre nouveau mot de passe' : 'Votre mot de passe',
+                'label' => $options['is_password'] ? 'Votre nouveau mot de passe' : 'Votre mot de passe',
                 'required' => !$options['is_edit'], // Non obligatoire si édition
                 'attr' => array(
                     'placeholder' => 'Mot de passe',
                 ),
             ])
-            ->add('submit', SubmitType::class, ['label' => $options['is_edit'] ? 'Mettre à jour' : 'S\'inscrire',
+            ->add('submit', SubmitType::class, ['label' => $options['is_edit'] || $options['is_password'] ? 'Mettre à jour' : 'S\'inscrire',
             ])
             // utilisation de l'event POST_SUBMIT pour avoir déjà l'entité User "crée"
             ->addEventListener(FormEvents::POST_SUBMIT, $this->dateTrait());

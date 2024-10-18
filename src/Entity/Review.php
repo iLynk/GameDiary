@@ -51,6 +51,13 @@ class Review
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    public function getScore(): int
+    {
+        return array_sum(array_map(function (Vote $vote) {
+            return $vote->getType();
+        }, $this->votes->toArray()));
+    }
+
     public function __construct()
     {
         $this->votes = new ArrayCollection();
