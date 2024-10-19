@@ -99,7 +99,7 @@ class ProfileController extends AbstractController
             }
 
             // Rediriger après la mise à jour
-            $this->addFlash('success', 'Votre mot de passe a bien été modifiées' );
+            $this->addFlash('success', 'Votre mot de passe a bien été modifié' );
             return $this->redirectToRoute('app_profile');
         } else {
             foreach ($form->getErrors(true) as $error) {

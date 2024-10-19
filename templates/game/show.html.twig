@@ -13,17 +13,20 @@
                 <h1>{{ game.name }}</h1>
 
                 <img src="{{ game.cover }}" alt="image du jeu {{ game.name }}">
-                {% if userList and not userList.getGames().contains(game) %}
-                    <form class="add-fav" method="post" action="{{ path('app_list_add', {'id': game.id}) }}">
-                        <input type="hidden" name="_token" value="{{ csrf_token('add' ~ game.id) }}">
-                        <button class="addlist">{{ ux_icon('mdi:heart-outline') }}</button>
-                    </form>
+                {% if app.user %}
+                    {% if userList and not userList.getGames().contains(game) %}
+                        <form class="add-fav" method="post" action="{{ path('app_list_add', {'id': game.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('add' ~ game.id) }}">
+                            <button class="addlist">{{ ux_icon('mdi:heart-outline') }}</button>
+                        </form>
                     {% else %}
                         <form class="delete-fav" method="post" action="{{ path('app_list_delete', {'id': game.id}) }}">
                             <input type="hidden" name="_token" value="{{ csrf_token('add' ~ game.id) }}">
                             <button class="deletelist">{{ ux_icon('mdi:heart-off-outline') }}</button>
                         </form>
+                    {% endif %}
                 {% endif %}
+
                 {% include "/_partials/_flashes.html.twig" %}
                 <p>{{ game.name }} est sorti le : {{ game.releasedate|date('d-m-Y') }}</p>
 
@@ -75,10 +78,18 @@
                     {% else %}
                         <p>Jeu non terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
                     {% endif %}
-                    {% if app.user != review.user %}
-                        <button class="like">{{ ux_icon('mdi:like') }}</button>
-                        <button class="dislike">{{ ux_icon('mdi:dislike') }}</button>
-                    {% endif %}
+                    <div class="review-vote">
+                        <p><span id="review-score-{{ review.id }}">{{ review.getScore() }}</span></p>
+                        {% if app.user %}
+                            {% if app.user != review.user %}
+                                <button class="like" data-id="{{ review.id }}"
+                                        data-type="1">{{ ux_icon('mdi:like') }}</button>
+                                <button class="dislike" data-id="{{ review.id }}"
+                                        data-type="-1">{{ ux_icon('mdi:dislike') }}</button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
                 </div>
             {% endfor %}
         </div>
@@ -90,4 +101,5 @@
 {% block javascripts %}
     <script src="{{ asset('js/stars.js') }}"></script>
     <script src="{{ asset('js/rateForm.js') }}"></script>
+    <script src="{{ asset('js/vote.js') }}"></script>
 {% endblock %}

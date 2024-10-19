@@ -18,6 +18,13 @@ body {
     flex-direction: column;
     padding-bottom: 50px;
 
+    a {
+      margin: 0 auto;
+      &:hover{
+        scale: 1.05;
+      }
+    }
+
     p {
       font-size: 1.35rem;
     }
@@ -27,27 +34,59 @@ body {
     padding-bottom: 30px;
   }
 
+
   a {
     text-decoration: none;
     color: white;
+    width: fit-content;
 
+    &:hover {
+      border-bottom: 2px solid white;
+
+      color: $cream;
+    }
   }
 
   img {
     width: 130px;
-    height: 130px;
+    height: 150px;
   }
 
   .review {
     border: 1px solid $cream;
     border-radius: 10px;
-    padding: 0 15px 10px 15px;
+    padding: 15px 15px 10px 15px;
+
+    img {
+      margin-bottom: 8px;
+    }
+
+    p,
+    span {
+      padding: 0px;
+      margin: 2px;
+    }
+
+    form {
+      text-align: right;
+    }
+
+    button {
+      background-color: transparent;
+      border: none;
+      text-align: right;
+
+      svg {
+        color: #983333;
+      }
+    }
 
     display: flex;
     flex-direction: column;
     width: 90%;
-    margin: auto;
+    margin: 10px auto;
     text-align: left;
+
     .game-rate {
       form {
         display: flex;
@@ -79,6 +118,31 @@ body {
         }
 
       }
+    }
+  }
+
+  .favList {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+
+    h3 {
+      color: white;
+    }
+
+    .game {
+      a{
+        text-decoration: none;
+        &:hover{
+          border: none;
+        }
+      }
+      img {
+        border: 1px solid white;
+      }
+
+      padding: 10px;
+      margin: 5px;
     }
   }
 }

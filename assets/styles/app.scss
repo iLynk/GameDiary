@@ -14,8 +14,7 @@ body {
     margin: 0 auto;
   }
 
-  h3,
-  h4{
+  h3, h4 {
     font-size: 1.7rem;
     text-transform: uppercase;
   }
@@ -44,7 +43,8 @@ body {
   svg {
     height: 25px;
     color: white;
-    &:hover{
+
+    &:hover {
       scale: 1.15;
     }
   }
@@ -62,9 +62,8 @@ body {
 
   /* Lorsque l'étoile est sélectionnée (après clic) */
   .star.selected {
-      color: gold;
+    color: gold;
   }
-
 
   .games {
     display: flex;
@@ -117,30 +116,98 @@ body {
     cursor: pointer;
   }
 
-  .alert-danger{
+  .alert-danger {
     color: #fc8888;
   }
-  .alert-success{
+
+  .alert-success {
     color: #80b080;
+  }
+
+  .reviews {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 20px;
+    .review {
+      border: 1px solid $cream;
+      padding-top: 10px;
+      margin: 5px;
+      width: 350px;
+      span{
+        color: white;
+      }
+
+      img {
+        width: 200px;
+        height: 250px;
+        border: 1px solid white;
+      }
+      button.like {
+        background-color: transparent;
+        border: none;
+        svg {
+          color: #7aa0c4;
+        }
+      }
+
+      button.dislike {
+        border: none;
+        background-color: transparent;
+
+        svg {
+          color: #d25b5b;
+        }
+      }
+    }
+  }
+
+  footer {
+    hr {
+      border-color: $cream;
+    }
+
+    text-align: left;
+    font-size: 1.2rem;
+    padding-left: 10px;
+
+    a {
+      text-decoration: none;
+
+      p {
+        text-align: right;
+        padding-right: 10px;
+        color: $rink;
+      }
+    }
   }
 }
 
-footer {
-  hr {
-    border-color: $cream;
+/* Place the media query outside the body rule */
+@media screen and (max-width: 1024px) {
+  body{
+
+
+  h1 {
+    font-size: 2rem;
   }
 
-  text-align: left;
-  font-size: 1.2rem;
-  padding-left: 10px;
+  h2 {
+    font-size: 1.3rem;
+  }
 
-  a {
-    text-decoration: none;
-
-    p {
-      text-align: right;
-      padding-right: 10px;
-      color: $rink;
+  .header-image {
+    display: none;
+  }
+}
+}
+@media screen and (max-width: 768px){
+  body{
+    h3,
+    h4{
+      font-size: 1.2rem;
     }
+
+
   }
 }

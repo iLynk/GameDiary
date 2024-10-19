@@ -110,35 +110,39 @@ class ReviewController extends AbstractController
 
         $referer = $request->headers->get('referer');
         $this->addFlash('success', 'Votre avis à bien été supprimé');
-        if($referer && str_contains($referer, "/admin")) {
+        if ($referer && str_contains($referer, "/admin")) {
             return $this->redirectToRoute('admin_dashboard');
-        }else{
+        } else {
             return $this->redirectToRoute('app_profile');
         }
     }
 
     #[Route('/vote/{id}/{type}', name: 'vote_review', methods: ['POST'])]
-    public function vote(Review $review, int $type, EntityManagerInterface $entityManager, ReviewRepository $voteRepository): JsonResponse
+    public function vote(Review $review, int $type, EntityManagerInterface $entityManager): JsonResponse
     {
-        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+        $user = $this->getUser();
+
+        // Vérifier si l'utilisateur est connecté
         if (!$user) {
-            return new JsonResponse(['error' => 'Not logged in'], 403);
+            return new JsonResponse(['error' => 'Vous devez être connecté pour voter.'], 403);
         }
 
-        // Vérifier si l'utilisateur a déjà voté sur cette review
-        $vote = $voteRepository->findOneBy(['user' => $user, 'review' => $review]);
+        // Vérifier si l'utilisateur a déjà voté pour cette review
+        $existingVote = $entityManager->getRepository(Vote::class)->findOneBy([
+            'user' => $user,
+            'review' => $review
+        ]);
 
-        if ($vote) {
-            // Si l'utilisateur a déjà voté sur cette review, on met à jour le vote
-            if ($vote->getType() === $type) {
-                // Si le même vote est soumis (like sur like ou dislike sur dislike), on annule le vote
-                $entityManager->remove($vote);
+        if ($existingVote) {
+            // Si l'utilisateur a déjà voté et soumet le même vote, on annule son vote (effet toggle)
+            if ($existingVote->getType() === $type) {
+                $entityManager->remove($existingVote);
                 $entityManager->flush();
                 return new JsonResponse(['success' => true, 'score' => $review->getScore()]);
             }
 
-            // Sinon, on change le type de vote (de like à dislike ou inversement)
-            $vote->setType($type);
+            // Sinon, on met à jour son vote
+            $existingVote->setType($type);
         } else {
             // Ajouter un nouveau vote si l'utilisateur n'a pas encore voté
             $vote = new Vote();
@@ -148,10 +152,12 @@ class ReviewController extends AbstractController
             $entityManager->persist($vote);
         }
 
+        // Sauvegarder les modifications
         $entityManager->flush();
 
+        // Retourner le nouveau score
         return new JsonResponse(['success' => true, 'score' => $review->getScore()]);
-    }
 
+    }
 }
 

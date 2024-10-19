@@ -39,7 +39,10 @@ class SecurityController extends AbstractController
             // on hache le password et on ajoute le role user
             $user->setPassword($hasher->hashPassword($user, $user->getPassword()))
                 ->setRoles(['ROLE_USER']);
+            $userList = new UserList();
+            $userList->setUser($user);
             // on enregistre l'utilisateur
+            $em->persist($userList);
             $em->persist($user);
             $em->flush();
             return $userAuthenticator->authenticateUser(

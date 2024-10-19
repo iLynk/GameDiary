@@ -16,17 +16,20 @@
     <div class="infos">
         <p>Nom d'utilisateur: <span>{{ user.name }}</span></p>
         <p>E-mail: <span>{{ user.email }} </span></p>
-        <a href="{{ path('app_profile_edit') }}">Modifier vos informations ? {{ ux_icon('cuida:edit-outline') }}</a>
+        <a href="{{ path('app_profile_edit') }}">Modifier vos informations ?
+            <span>{{ ux_icon('flowbite:user-edit-outline') }}</span></a>
         <a href="{{ path('app_profile_edit_password') }}">Modifier votre mot de
-            passe? {{ ux_icon('cuida:edit-outline') }}</a>
+            passe? {{ ux_icon('flowbite:user-edit-outline') }}</a>
     </div>
 
     <div id="reviews-list">
         <h2>Vos Avis</h2>
         {% for review in reviews %}
             <div class="review">
+                <a href="{{ path('app_game_show', {'slug': review.game.slug}) }}">
                 <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
                 <p>Jeu : <span>{{ review.game.name }}</span></p>
+                </a>
                 <p>Note : <span>{{ review.rate }}★/5</span></p>
                 {% if review.comment %}
                     <p>Commentaire : <span>{{ review.comment }}</span></p>
@@ -37,7 +40,7 @@
                     <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
                 {% endif %}
                 <a href="{{ path('app_review_edit', {'id': review.id}) }}"><p>Modifier votre avis
-                        ? {{ ux_icon('cuida:edit-outline') }}</p></a>
+                        ? {{ ux_icon('hugeicons:note-edit') }}</p></a>
                 <form class="delete-form" method="post" action="{{ path('app_review_delete', {'id': review.id}) }}"
                       onsubmit="return confirm('Voulez-vous vraiment supprimer cet avis ?');">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
@@ -46,16 +49,18 @@
             </div>
         {% endfor %}
     </div>
-
+    <h3>Votre Liste</h3>
     <section class="favList">
-        <h3>Votre Liste</h3>
-{#        {{ dump(userList.games) }}#}
+
+        {#        {{ dump(userList.games) }} #}
 
         {% if userList %}
             {% for game in userList.games %}
                 <div class="game">
-                    <img src="{{ game.cover }}" alt="image de couverture du jeu {{ game.name }}">
-                    <p>{{ game.name }}</p>
+                    <a href="{{ path('app_game_show', {'slug': game.slug}) }}">
+                        <img src="{{ game.cover }}" alt="image de couverture du jeu {{ game.name }}">
+                        <p>{{ game.name }}</p>
+                    </a>
                 </div>
             {% else %}
                 <p>Aucun jeu dans votre liste.</p>

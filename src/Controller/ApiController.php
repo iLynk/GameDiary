@@ -96,12 +96,6 @@ class ApiController extends AbstractController
                     if (isset($gameData['storyline'])) {
                         $game->setStoryline($gameData['storyline']);
                     }
-                    // Gestion de l'artwork du jeu, pour l'instant ça ne marche pas
-                    if (isset($gameData['cover'])) {
-                        $game->setCover('ça marche pas de fou');
-                    } else {
-                        $game->setCover('');
-                    }
                     // Ajout des catégories si disponibles
                     if (isset($gameData['genres'])) {
                         foreach ($gameData['genres'] as $genreApiId) {

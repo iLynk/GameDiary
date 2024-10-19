@@ -17,6 +17,7 @@ Encore
     .addStyleEntry('game_styles', './assets/styles/game.scss')
     .addStyleEntry('game_styles_details', './assets/styles/game-details.scss')
     .addStyleEntry('profile', './assets/styles/profile.scss')
+    .addStyleEntry('home', './assets/styles/home.scss')
 
     // Configurer les options de surveillance pour Webpack Watcher
     .configureWatchOptions(function(watchOptions) {

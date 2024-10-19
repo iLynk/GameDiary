@@ -4,6 +4,7 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('build/game_styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/home.css') }}">
 {% endblock %}
 {% block header %}
     <p>test</p>
@@ -12,10 +13,10 @@
 
     <div class="example-wrapper">
         <h1>GAME DIARY ! </h1>
-            <img class="header-image" src="{{ asset('images/header.webp') }}"
-                 alt="image de couverture montrant plein de jeux vidéos">
+        <img class="header-image" src="{{ asset('images/header.webp') }}"
+             alt="image de couverture montrant plein de jeux vidéos">
     </div>
-    <h2>l’application qui vous permet de garder en mémoire vos souvenirs préférés</h2>
+    <h2>L’application qui vous permet de garder en mémoire vos souvenirs préférés</h2>
     {% if games %}
     <h3>Les derniers jeux marquants :</h3>
     <section class="games">
@@ -35,23 +36,35 @@
     <section class="reviews">
         {% for review in reviews %}
             <div class="review">
-                <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
+                <a href="{{ path('app_game_show', {'slug': review.game.slug}) }}">
+                    <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
+                </a>
+
                 <p>{{ review.game.name }}</p>
-                <p> Utilisateur : {{ review.user.name }}</p>
-                <p>Note : {{ review.rate }}</p>
+                <p> Utilisateur : <span>{{ review.user.name }}</span></p>
+                <p>Note : <span>{{ review.rate }}★</span></p>
                 {% if review.comment %}
-                    <p>Commentaire : {{ review.comment }}</p>
+                    <p>Commentaire : <span>{{ review.comment }}</span></p>
                 {% endif %}
                 {% if review.completed != 0 %}
                     <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
                 {% else %}
                     <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
                 {% endif %}
+                <div class="review-vote">
+                    <p><span id="review-score-{{ review.id }}">{{ review.getScore() }}</span></p>
+                    {% if app.user %}
+                        {% if app.user != review.user %}
+                            <button class="like" data-id="{{ review.id }}"
+                                    data-type="1">{{ ux_icon('mdi:like') }}</button>
+                            <button class="dislike" data-id="{{ review.id }}"
+                                    data-type="-1">{{ ux_icon('mdi:dislike') }}</button>
+                        {% endif %}
+                    {% endif %}
+                </div>
             </div>
-            <hr>
         {% endfor %}
     </section>
-
     <script src="{{ asset('build/main_js.js') }}"></script>
-
+    <script src="{{ asset('js/vote.js') }}"></script>
 {% endblock %}
