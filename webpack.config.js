@@ -6,8 +6,14 @@ Encore
     // Chemin public utilisé par le navigateur pour accéder aux assets
     .setPublicPath('/build')
     // Ajouter des fichiers d'entrée (JS ou CSS/SCSS)
+    .addEntry('admin', './assets/js/admin.js')
     .addEntry('app', './assets/js/app.js')
+    .addEntry('dynamicFilter', './assets/js/dynamicFilter.js')
+    .addEntry('formValidator', './assets/js/formValidator.js')
     .addEntry('main', './assets/js/main.js')
+    .addEntry('rateForm', './assets/js/rateForm.js')
+    .addEntry('stars', './assets/js/stars.js')
+    .addEntry('vote', './assets/js/vote.js')
     // Correction : Nom unique pour chaque fichier CSS généré
     .addStyleEntry('app_styles', './assets/styles/app.scss')
     .addStyleEntry('admin_styles', './assets/styles/admin.scss')
