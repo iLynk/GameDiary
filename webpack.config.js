@@ -50,4 +50,11 @@ Encore
 ;
 
 // Exporter la configuration Webpack
+module.exports = {
+    mode: 'production',
+    optimization: {
+        minimize: false // Désactive la minification
+    }
+};
+
 module.exports = Encore.getWebpackConfig();
