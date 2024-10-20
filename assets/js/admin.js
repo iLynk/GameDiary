@@ -5,6 +5,7 @@ const loaderP = document.querySelector('.loader > p')
 const successMessage = document.querySelector('.success-message')
 
 console.log('script correctement chargé');
+
 function sendPostRequest(url) {
     // on affiche le loader et son message
     loader.classList.remove('not-visible')
@@ -34,3 +35,5 @@ function sendPostRequest(url) {
     });
 }
 
+// Rendre la fonction accessible globalement
+window.sendPostRequest = sendPostRequest;
