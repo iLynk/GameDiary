@@ -49,12 +49,13 @@ Encore
     .enableSingleRuntimeChunk()
 ;
 
-// Exporter la configuration Webpack
-module.exports = {
-    mode: 'production',
-    optimization: {
-        minimize: false // Désactive la minification
-    }
-};
+// Désactiver la minification uniquement en mode production
+const config = Encore.getWebpackConfig();
+if (Encore.isProduction()) {
+    config.optimization = {
+        minimize: false // Désactive la minification en production
+    };
+}
 
-module.exports = Encore.getWebpackConfig();
+// Exporter la configuration Webpack
+module.exports = config;
