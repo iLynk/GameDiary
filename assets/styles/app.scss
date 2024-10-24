@@ -120,6 +120,10 @@ body {
     color: #fc8888;
   }
 
+  .alert-info {
+    color: #da9240;
+  }
+
   .alert-success {
     color: #80b080;
   }
@@ -131,6 +135,7 @@ body {
     padding: 20px;
 
     .review {
+      background-color: #0104143b;
       border: 1px solid $cream;
       padding: 20px 0;
       margin: 5px;

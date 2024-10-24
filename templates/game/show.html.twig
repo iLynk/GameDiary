@@ -69,7 +69,8 @@
             <div class="flex">
                 {% for review in reviews %}
                 <div class="review">
-                    <p>{{ review.user.name }} : <span>{{ review.rate }}★</span></p>
+                    <p>Nom : <span>{{ review.user.name }}</span></p>
+                    <p>Note : <span>{{ review.rate }}★</span></p>
 
                     {% if review.comment %}
                         <p>Commentaire : <span>{{ review.comment }}</span></p>

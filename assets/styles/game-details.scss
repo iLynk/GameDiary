@@ -121,13 +121,15 @@ body {
       justify-content: center;
 
       div {
-        margin: 6px;
         width: 250px;
+        p{
+          margin: 8px;
+
+        }
       }
     }
-
     .review {
-
+      background-color: #0104143b;
       border: 1px solid white;
       border-radius: 5px;
       padding: 6px;
