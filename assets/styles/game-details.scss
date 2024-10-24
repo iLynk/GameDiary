@@ -43,11 +43,13 @@ body {
         margin: 0;
         padding: 0;
       }
-      button.addlist{
+
+      button.addlist {
         background-color: transparent;
         border: none;
       }
-      button.deletelist{
+
+      button.deletelist {
         background-color: transparent;
         border: none;
       }
@@ -116,6 +118,12 @@ body {
     flex-direction: column;
     justify-content: center;
 
+    @media (min-width: 768px) {
+      width: 40%;
+      margin: auto;
+      padding: 10px;
+    }
+
     .review {
 
       border: 1px solid white;
@@ -124,11 +132,18 @@ body {
       margin: 3px;
 
       p:first-child {
-
         span {
           color: white;
         }
+      }
 
+      p {
+
+      span{
+        color: white;
+        word-break: break-word; // Gère les longs mots qui dépasseraient de la zone
+        white-space: normal; // Permet le retour à la ligne pour les textes longs
+      }
       }
 
       button {
@@ -139,12 +154,23 @@ body {
       }
 
       button.like {
+        background-color: transparent;
+        border: none;
+      }
+
+      button.liked {
         svg {
           color: #7aa0c4;
         }
       }
 
       button.dislike {
+        border: none;
+        background-color: transparent;
+
+      }
+
+      button.disliked {
         svg {
           color: #d25b5b;
         }

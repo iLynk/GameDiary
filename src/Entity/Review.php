@@ -183,4 +183,27 @@ class Review
 
         return $this;
     }
+
+    // Vérifie si un utilisateur a liké cette review
+    public function isLikedByUser(User $user): bool
+    {
+        foreach ($this->votes as $vote) {
+            if ($vote->getUser() === $user && $vote->getType() === 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+// Vérifie si un utilisateur a disliké cette review
+    public function isDislikedByUser(User $user): bool
+    {
+        foreach ($this->votes as $vote) {
+            if ($vote->getUser() === $user && $vote->getType() === -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

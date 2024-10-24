@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ game.name }}{% endblock %}
+{% block title %}{{ game.name }} - Game Diary{% endblock %}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('build/game_styles_details.css') }}">
 {% endblock %}
@@ -71,7 +71,7 @@
                     <p>{{ review.user.name }} : <span>{{ review.rate }}★</span></p>
 
                     {% if review.comment %}
-                        <p>{{ review.comment }}</p>
+                        <p>Commentaire : <span>{{ review.comment }}</span></p>
                     {% endif %}
                     {% if review.completed != 0 %}
                         <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
@@ -79,13 +79,22 @@
                         <p>Jeu non terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
                     {% endif %}
                     <div class="review-vote">
-                        <p><span id="review-score-{{ review.id }}">{{ review.getScore() }}</span></p>
+                        <p><span id="review-score-{{ review.id }}"><span class="cream">Appréciation : </span>{{ review.getScore() }}</span></p>
                         {% if app.user %}
                             {% if app.user != review.user %}
-                                <button class="like" data-id="{{ review.id }}"
-                                        data-type="1">{{ ux_icon('mdi:like') }}</button>
-                                <button class="dislike" data-id="{{ review.id }}"
-                                        data-type="-1">{{ ux_icon('mdi:dislike') }}</button>
+                                <button class="like {{ review.likedByUser ? 'liked' : '' }}"
+                                        data-id="{{ review.id }}"
+                                        data-type="1"
+                                        data-csrf="{{ csrf_token('vote' ~ review.id) }}">
+                                    {{ ux_icon('mdi:like') }}
+                                </button>
+
+                                <button class="dislike {{ review.dislikedByUser ? 'disliked' : '' }}"
+                                        data-id="{{ review.id }}"
+                                        data-type="-1"
+                                        data-csrf="{{ csrf_token('vote' ~ review.id) }}">
+                                    {{ ux_icon('mdi:dislike') }}
+                                </button>
                             {% endif %}
                         {% endif %}
                     </div>

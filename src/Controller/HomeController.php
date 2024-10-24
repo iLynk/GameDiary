@@ -15,6 +15,13 @@ class HomeController extends AbstractController
     {
         $latestGames = $gameRepository->findLatest();
         $latestReviews = $reviewRepository->findLast5Reviews();
+        $user = $this->getUser();
+        if ($user) {
+            foreach ($latestReviews as $review) {
+                $review->likedByUser = $review->isLikedByUser($this->getUser());
+                $review->dislikedByUser = $review->isDislikedByUser($this->getUser());
+            }
+        }
         return $this->render('home/index.html.twig', [
             'games' => $latestGames,
             'reviews' => $latestReviews

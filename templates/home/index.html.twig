@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Page d'accueil !{% endblock %}
+{% block title %}Accueil - Game Diary{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('build/game_styles.css') }}">
@@ -52,13 +52,24 @@
                     <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
                 {% endif %}
                 <div class="review-vote">
-                    <p><span id="review-score-{{ review.id }}">{{ review.getScore() }}</span></p>
+                    <p><span id="review-score-{{ review.id }}"><span class="cream">Appréciation :</span> {{ review.getScore() }}</span></p>
                     {% if app.user %}
                         {% if app.user != review.user %}
-                            <button class="like" data-id="{{ review.id }}"
-                                    data-type="1">{{ ux_icon('mdi:like') }}</button>
-                            <button class="dislike" data-id="{{ review.id }}"
-                                    data-type="-1">{{ ux_icon('mdi:dislike') }}</button>
+                            <button class="like {{ review.likedByUser ? 'liked' : '' }}"
+                                    data-id="{{ review.id }}"
+                                    data-type="1"
+                                    data-csrf="{{ csrf_token('vote' ~ review.id) }}">
+                                {{ ux_icon('mdi:like') }}
+                            </button>
+
+                            <button class="dislike {{ review.dislikedByUser ? 'disliked' : '' }}"
+                                    data-id="{{ review.id }}"
+                                    data-type="-1"
+                                    data-csrf="{{ csrf_token('vote' ~ review.id) }}">
+                                {{ ux_icon('mdi:dislike') }}
+                            </button>
+
+
                         {% endif %}
                     {% endif %}
                 </div>

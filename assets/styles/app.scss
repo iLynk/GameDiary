@@ -131,7 +131,7 @@ body {
     padding: 20px;
     .review {
       border: 1px solid $cream;
-      padding-top: 10px;
+      padding: 20px 0;
       margin: 5px;
       width: 350px;
       span{
@@ -142,10 +142,13 @@ body {
         width: 200px;
         height: 250px;
         border: 1px solid white;
+        margin-top: 10px;
       }
       button.like {
         background-color: transparent;
         border: none;
+      }
+      button.liked{
         svg {
           color: #7aa0c4;
         }
@@ -155,13 +158,18 @@ body {
         border: none;
         background-color: transparent;
 
+      }
+
+      button.disliked{
         svg {
           color: #d25b5b;
         }
       }
     }
   }
-
+.cream{
+  color: $cream !important;
+}
   footer {
     hr {
       border-color: $cream;

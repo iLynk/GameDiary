@@ -1,0 +1,38 @@
+@import '_variables.scss';
+
+body {
+  font-family: $font-family-game, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  color: white;
+  b{
+    color: $cream;
+  }
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+
+
+ul {
+  padding-left: 20px;
+}
+
+p {
+  margin: 10px 0;
+}
+
+a {
+  color: $rink;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

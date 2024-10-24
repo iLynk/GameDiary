@@ -41,7 +41,14 @@ class GameController extends AbstractController
         $user = $this->getUser();
         $hasReviewed = false;
         $userList = null;
-
+        $reviews = $game->getReviews();
+        $user = $this->getUser();
+        if ($user) {
+            foreach ($reviews as $review) {
+                $review->likedByUser = $review->isLikedByUser($this->getUser());
+                $review->dislikedByUser = $review->isDislikedByUser($this->getUser());
+            }
+        }
         if ($user) {
             $hasReviewed = $reviewRepository->findOneBy([
                     'user' => $user,

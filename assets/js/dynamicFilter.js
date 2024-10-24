@@ -36,4 +36,5 @@ function filterCategories(categoryName) {
     });
 }
 
-
+window.filterGames = filterGames;
+window.filterCategories = filterCategories;

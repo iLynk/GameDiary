@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="{{ asset('build/admin_styles.css') }}">
 {% endblock %}
 {% block body %}
-    <h1>Console Administrateur !</h1>
+    <h1>Admin - Game Diary</h1>
 
     <h2>Votre boite à outils API :</h2>
     <div class="game_buttons">
@@ -13,6 +13,7 @@
         <button onclick="sendPostRequest('{{ path('api_get_covers') }}')">Récupérer les artworks (peut être un peu
             long !)
         </button>
+        <input type="hidden" id="csrf-token" value="{{ csrf_token('api_actions') }}">
     </div>
     <div class="loader">
         <img src="images/loader.gif" alt="image de chargement" class="not-visible">

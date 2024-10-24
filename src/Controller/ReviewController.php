@@ -26,14 +26,14 @@ class ReviewController extends AbstractController
         #[MapEntity(mapping: ['slug' => 'slug'])] Game $game, Request $request, EntityManagerInterface $entityManager, ReviewRepository $reviewRepository): JsonResponse
     {
         $user = $this->getUser();
-// On vérifie que la personne est bien connectée
+        // On vérifie que la personne est bien connectée
         if (!$user) {
-// Sinon on retourne une réponse négative
+            // Sinon on retourne une réponse négative
             return new JsonResponse([
                 'result' => false,
                 'message' => 'Vous devez être connecté espèce de petit malin'
             ]);
-// Pareil si l'utilisateur a déjà noté le jeu
+        // Pareil si l'utilisateur a déjà noté le jeu
         } elseif ($reviewRepository->findOneBy(['user' => $user, 'game' => $game]) !== null) {
             return new JsonResponse([
                 'success' => false,
@@ -43,33 +43,33 @@ class ReviewController extends AbstractController
         $review = new Review();
         $form = $this->createForm(ReviewType::class, $review);
 
-// on récupère la data envoyée
+        // on récupère la data envoyée
         $form->handleRequest($request);
 
-// Vérifier si le formulaire est soumis et valide
+        // Vérifier si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
-// On ajoute l'user
+            // On ajoute l'user
             $review->setUser($this->getUser());
-// On ajoute le jeu
+             // On ajoute le jeu
             $review->setGame($game)
-// On récupère les différentes informations envoyées
+                // On récupère les différentes informations envoyées
                 ->setRate($form['rate']->getData())
                 ->setComment($form['comment']->getData())
                 ->setCompleted($form['completed']->getData());
 
 
-// On sauvegarde l'avis en bdd
+            // On sauvegarde l'avis en bdd
             $entityManager->persist($review);
             $entityManager->flush();
 
-// On envoie une réponse positive
+            // On envoie une réponse positive
             return new JsonResponse([
                 'success' => true,
                 'message' => 'Votre avis a été enregistré avec succès.'
             ]);
         }
 
-// Si jamais le form n'était pas valide, on renvoie une erreur
+        // Si jamais le form n'était pas valide, on renvoie une erreur
         return new JsonResponse([
             'success' => false,
             'errors' => (string)$form->getErrors(true),
@@ -118,13 +118,23 @@ class ReviewController extends AbstractController
     }
 
     #[Route('/vote/{id}/{type}', name: 'vote_review', methods: ['POST'])]
-    public function vote(Review $review, int $type, EntityManagerInterface $entityManager): JsonResponse
+    public function vote(Review $review, int $type, EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         $user = $this->getUser();
 
-        // Vérifier si l'utilisateur est connecté
-        if (!$user) {
+        // Vérifier si l'utilisateur est connecté et du bon type
+        if (!$user instanceof \App\Entity\User) {
             return new JsonResponse(['error' => 'Vous devez être connecté pour voter.'], 403);
+        }
+
+        // Vérifier la validité du token CSRF
+        if (!$this->isCsrfTokenValid('vote' . $review->getId(), $request->headers->get('X-CSRF-Token'))) {
+            return new JsonResponse(['error' => 'Token CSRF invalide.'], 403);
+        }
+
+        // Valider le type de vote
+        if (!in_array($type, [-1, 1])) {
+            return new JsonResponse(['error' => 'Type de vote invalide.'], 400);
         }
 
         // Vérifier si l'utilisateur a déjà voté pour cette review
@@ -133,16 +143,17 @@ class ReviewController extends AbstractController
             'review' => $review
         ]);
 
+        $toggle = false; // Indique si le vote a été annulé
+
         if ($existingVote) {
             // Si l'utilisateur a déjà voté et soumet le même vote, on annule son vote (effet toggle)
             if ($existingVote->getType() === $type) {
                 $entityManager->remove($existingVote);
-                $entityManager->flush();
-                return new JsonResponse(['success' => true, 'score' => $review->getScore()]);
+                $toggle = true; // Le vote a été annulé
+            } else {
+                // Sinon, on met à jour son vote
+                $existingVote->setType($type);
             }
-
-            // Sinon, on met à jour son vote
-            $existingVote->setType($type);
         } else {
             // Ajouter un nouveau vote si l'utilisateur n'a pas encore voté
             $vote = new Vote();
@@ -155,9 +166,14 @@ class ReviewController extends AbstractController
         // Sauvegarder les modifications
         $entityManager->flush();
 
-        // Retourner le nouveau score
-        return new JsonResponse(['success' => true, 'score' => $review->getScore()]);
-
+        // Retourner le nouveau score et l'information sur l'annulation du vote
+        return new JsonResponse([
+            'success' => true,
+            'score' => $review->getScore(),
+            'toggle' => $toggle
+        ]);
     }
+
+
 }
 

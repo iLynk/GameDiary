@@ -11,10 +11,13 @@ use App\Repository\GameRepository;
 use App\Service\ApiTokenService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\Exception\{ClientExceptionInterface,
     DecodingExceptionInterface,
@@ -33,12 +36,14 @@ class ApiController extends AbstractController
     private HttpClientInterface $httpClient;
     private ApiTokenService $apiTokenService;
     private string $apiToken;
+    private CsrfTokenManagerInterface $csrfTokenManager;
 
-    public function __construct(HttpClientInterface $httpClient, ApiTokenService $apiTokenService)
+    public function __construct(HttpClientInterface $httpClient, ApiTokenService $apiTokenService, CsrfTokenManagerInterface $csrfTokenManager)
     {
         $this->httpClient = $httpClient;
         $this->apiTokenService = $apiTokenService;
         $this->apiToken = $apiTokenService->getToken();
+        $this->csrfTokenManager = $csrfTokenManager;
     }
 
     /**
@@ -46,23 +51,29 @@ class ApiController extends AbstractController
      * @param GameRepository $gameRepository
      * @param GameCategoryRepository $gameCategoryRepository
      * @param GamePlatformRepository $gamePlatformRepository
-     * @return Response
+     * @param Request $request
+     * @return JsonResponse
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    #[Route('/getGames', name: "api_get_games", methods: ['POST', 'GET'])]
-    // FONCTION QUI RECUPERE LES JEUX QUI ONT ETE EVALUES PAR AU MOINS 500 PERSONNES AFIN D'AVOIR DES JEUX "CONNUS"
+    #[Route('/getGames', name: "api_get_games", methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+// FONCTION QUI RECUPERE LES JEUX QUI ONT ETE EVALUES PAR AU MOINS 500 PERSONNES AFIN D'AVOIR DES JEUX "CONNUS"
     public function getGames(
         EntityManagerInterface $entityManager,
         GameRepository         $gameRepository,
         GameCategoryRepository $gameCategoryRepository,
-        GamePlatformRepository $gamePlatformRepository
-    ): Response
+        GamePlatformRepository $gamePlatformRepository,
+        Request                $request,
+    ): JsonResponse
     {
-        // on englobe la requête dans un try/catch pour gérer les erreurs
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('api_actions', $request->headers->get('X-CSRF-Token')))) {
+            return new JsonResponse(['error' => 'Token CSRF invalide.'], 403);
+        }
+
         try {
             // Requête pour récupérer les jeux
             $gamesData = $this->httpClient->request('POST', $this->getParameter('igdb_api_url') . '/games', [
@@ -76,6 +87,9 @@ class ApiController extends AbstractController
 
             $allGames = $gameRepository->findAllApiId();
             $allGamesIds = array_column($allGames, 'apiId');
+
+            $newGamesCount = 0;
+
             // Traitement des données de chaque jeu
             foreach ($gamesData as $gameData) {
                 if (!in_array($gameData['id'], $allGamesIds)) {
@@ -89,7 +103,6 @@ class ApiController extends AbstractController
                         $dateConverted = (new \DateTimeImmutable())->setTimestamp($dateToConvert);
                         $game->setReleaseDate($dateConverted);
                     } else {
-                        // Dans notre cas, les jeux sont tous sortis mais ça reste intéressant de traiter le cas ou la date n'existe pas encore
                         $game->setReleaseDate(null);
                     }
                     // Gestion du "résumé"
@@ -99,45 +112,57 @@ class ApiController extends AbstractController
                     // Ajout des catégories si disponibles
                     if (isset($gameData['genres'])) {
                         foreach ($gameData['genres'] as $genreApiId) {
-                            // On utilise le repo des categories pour trouver l(es)'entité(s) category correspondante(s)
                             $game->addGameCategory($gameCategoryRepository->findOneBy(['apiId' => $genreApiId]));
                         }
                     }
                     // Ajout des plateformes si disponibles
                     if (isset($gameData['platforms'])) {
                         foreach ($gameData['platforms'] as $platformApiId) {
-                            // même principe qu'avec les catégories, mais pour les plateformes
                             $game->addGamePlatform($gamePlatformRepository->findOneBy(['apiId' => $platformApiId]));
                         }
                     }
                     // on persiste le nouveau jeu à chaque itération de la boucle
                     $entityManager->persist($game);
+                    $newGamesCount++;
                 }
             }
 
-            // Et on tire la chasse !
+            // On tire la chasse !
             $entityManager->flush();
 
-            // On envoie une réponse au navigateur pour indiquer que tout s'est bien passé
-            $this->addFlash('success', 'Tous les jeux ont été récupérés et enregistrés.');
-            $this->redirectToRoute('api_get_games');
+            return new JsonResponse([
+                'success' => true,
+                'message' => "$newGamesCount nouveaux jeux ont été récupérés et enregistrés.",
+            ], 200);
         } catch (\Exception $e) {
-            // On envoie une réponse pour dire que ça ne s'est pas bien passé malheureusement...
-            $this->handleError('Une erreur est survenue lors de la récupération des jeux', $e);
+            return new JsonResponse([
+                'error' => 'Une erreur est survenue lors de la récupération des jeux.',
+                'details' => $e->getMessage()
+            ], 500);
         }
-
-        return $this->redirectToRoute('admin_dashboard');
     }
+
 
     /**
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
-     * @throws ClientExceptionInterface
+     * @throws ClientExceptionInterface|DecodingExceptionInterface|TransportExceptionInterface
      */
     #[Route('/getCategories', name: 'api_get_categories', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     // FONCTION POUR POPULATE L'ENTITE GAMECATEGORY
-    public function getCategories(EntityManagerInterface $entityManager, GameCategoryRepository $gameCategoryRepository): Response
+    public function getCategories(
+        EntityManagerInterface    $entityManager,
+        GameCategoryRepository    $gameCategoryRepository,
+        Request                   $request,
+        CsrfTokenManagerInterface $csrfTokenManager
+    ): JsonResponse
     {
+        // Vérifier le token CSRF
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('api_actions', $request->headers->get('X-CSRF-Token')))) {
+            return new JsonResponse(['error' => 'Token CSRF invalide.'], 403);
+        }
+
         try {
             // on récupère les catégories via l'API
             $categories = $this->httpClient->request('POST', $this->getParameter('igdb_api_url') . '/genres', [
@@ -167,13 +192,11 @@ class ApiController extends AbstractController
             // On exécute la requête à la fin
             $entityManager->flush();
 
-            $this->addFlash('success', 'Les catégories ont correctement été récupérées.');
+            return new JsonResponse(['success' => 'Les catégories ont correctement été récupérées.'], 200);
         } catch (\Exception $e) {
-            $this->handleError('Une erreur est survenue lors de la récupération des catégories', $e);
-        } catch (TransportExceptionInterface $e) {
+            // Gestion de l'erreur et renvoi d'une réponse JSON
+            return new JsonResponse(['error' => 'Une erreur est survenue lors de la récupération des catégories.'], 500);
         }
-
-        return $this->redirectToRoute('admin_dashboard');
     }
 
     /**
@@ -184,15 +207,25 @@ class ApiController extends AbstractController
      * @throws ClientExceptionInterface
      */
     #[Route('/getCovers', name: 'api_get_covers', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     // FONCTION POUR RECUPERER LES COVER DES JEUX PAR LOTS ET LES MODIFIER POUR 1080p
-        // ATTENTION, CE CODE A EN PARTIE ETE GENERE AVEC CHAT GPT CAR MON CODE DE BASE FAISAIT PLANTER LA MEMOIRE DE DOCTRINE
-    public function getCovers(EntityManagerInterface $entityManager, GameRepository $gameRepository): Response
+    public function getCovers(
+        EntityManagerInterface $entityManager,
+        GameRepository         $gameRepository,
+        Request                $request
+    ): JsonResponse
     {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('api_actions', $request->headers->get('X-CSRF-Token')))) {
+            return new JsonResponse(['error' => 'Token CSRF invalide.'], 403);
+        }
+
         try {
             // Récupérer tous les jeux avec leurs API ID
             $games = $gameRepository->findAll(); // Récupérer tous les jeux
             $batchSize = 10; // Taille du lot pour les requêtes API
             $gameBatches = array_chunk($games, $batchSize); // Diviser les jeux en lots
+
+            $updatedCoversCount = 0;
 
             foreach ($gameBatches as $gameBatch) {
                 // Extraire les game IDs des jeux dans ce lot
@@ -215,6 +248,7 @@ class ApiController extends AbstractController
                         $coverUrl = str_replace('t_thumb', 't_1080p', $coverData['url']);
                         $game->setCover($coverUrl);
                         $entityManager->persist($game); // Persister la mise à jour de la couverture
+                        $updatedCoversCount++;
                     }
                 }
 
@@ -223,28 +257,37 @@ class ApiController extends AbstractController
                 $entityManager->clear(); // Libérer la mémoire après chaque lot
             }
 
-            // Ajout d'un flash message de succès si tout s'est bien passé
-            $this->addFlash('success', 'Les artworks ont correctement été récupérés.');
+            return new JsonResponse([
+                'success' => true,
+                'message' => "$updatedCoversCount couvertures de jeux ont été mises à jour.",
+            ], 200);
         } catch (\Exception $e) {
-            // Gestion des erreurs avec un message flash d'erreur
-            $this->handleError('Une erreur est survenue lors de la récupération des artworks', $e);
+            return new JsonResponse([
+                'error' => 'Une erreur est survenue lors de la récupération des couvertures.',
+                'details' => $e->getMessage()
+            ], 500);
         }
-
-        // Redirection vers le tableau de bord admin après l'exécution
-        return $this->redirectToRoute('admin_dashboard');
     }
 
+
     /**
-     * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      */
     #[Route('/getPlatforms', name: 'api_get_platforms', methods: ['POST'])]
-    // FONCTION POUR RECUPERER TOUTES LES PLATEFORMES DE JEU
-    public function getPlatforms(EntityManagerInterface $entityManager, GamePlatformRepository $gamePlatformRepository, Request $request): Response
+    #[IsGranted('ROLE_ADMIN')]
+// FONCTION POUR RECUPERER TOUTES LES PLATEFORMES DE JEU
+    public function getPlatforms(
+        EntityManagerInterface $entityManager,
+        GamePlatformRepository $gamePlatformRepository,
+        Request                $request
+    ): JsonResponse
     {
+        if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('api_actions', $request->headers->get('X-CSRF-Token')))) {
+            return new JsonResponse(['error' => 'Token CSRF invalide.'], 403);
+        }
+
         try {
             // Requête pour récupérer les plateformes via l'API IGDB
             $gamePlatformsData = $this->httpClient->request('POST', $this->getParameter('igdb_api_url') . '/platforms', [
@@ -259,6 +302,8 @@ class ApiController extends AbstractController
             $allPlatforms = $gamePlatformRepository->findAllApiId();
             $allPlatformIds = array_column($allPlatforms, 'apiId'); // Optimisation du traitement des ID
 
+            $newPlatformsCount = 0;
+
             // Boucle pour ajouter les nouvelles plateformes récupérées
             foreach ($gamePlatformsData as $gamePlatformData) {
                 if (!in_array($gamePlatformData['id'], $allPlatformIds)) {
@@ -266,25 +311,30 @@ class ApiController extends AbstractController
                     $gamePlatform->setApiId($gamePlatformData['id'])
                         ->setName($gamePlatformData['name']);
                     $entityManager->persist($gamePlatform);
-                } else {
-                    $this->addFlash('success', 'pas de nouvelle plateforme à ajouter');
+                    $newPlatformsCount++;
                 }
             }
 
             // Sauvegarder les nouvelles plateformes en base de données
             $entityManager->flush();
 
-            // Message de succès
-            $this->addFlash('success', 'Les plateformes ont correctement été récupérées.');
+            return new JsonResponse([
+                'success' => true,
+                'message' => "$newPlatformsCount nouvelles plateformes ont été ajoutées.",
+            ], 200);
         } catch (TransportExceptionInterface|ClientExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface|DecodingExceptionInterface $e) {
-            $this->handleError('Une erreur est survenue lors de la récupération des plateformes', $e);
+            return new JsonResponse([
+                'error' => 'Une erreur est survenue lors de la récupération des plateformes.',
+                'details' => $e->getMessage()
+            ], 500);
         } catch (\Exception $e) {
-            $this->handleError('Une erreur inattendue est survenue lors de la récupération des plateformes', $e);
+            return new JsonResponse([
+                'error' => 'Une erreur inattendue est survenue lors de la récupération des plateformes.',
+                'details' => $e->getMessage()
+            ], 500);
         }
-        //$this->get('session')->getFlashBag()->add('success', 'Message ajouté');
-        // Redirection vers le tableau de bord admin
-        return $this->redirectToRoute('admin_dashboard');
     }
+
 
     /**
      * Gestion des erreurs en fonction de l'environnement
