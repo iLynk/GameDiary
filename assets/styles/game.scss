@@ -26,7 +26,9 @@ body {
     display: flex;
     flex-wrap: wrap;
     padding: 10px;
-    justify-content: space-evenly;
+    width: 80%;
+    margin: auto;
+    justify-content: center;
 
     .category {
       cursor: pointer;
@@ -34,6 +36,7 @@ body {
       background-color: $secondary-blue;
       text-align: center;
       padding: 10px;
+      margin: 10px;
       border: 1px solid transparent;
       border-radius: 15px;
     }
@@ -44,7 +47,7 @@ body {
     width: fit-content;
     cursor: pointer;
     padding: 10px;
-    margin-left: 10px;
+    margin: auto;
     border-radius: 15px;
     border: 3px solid $secondary-blue;
     text-transform: uppercase;
@@ -58,11 +61,14 @@ body {
 .search-filter{
   display: flex;
   justify-content: left;
+
+  width: 86%;
+  margin: 15px auto;
   #search-game{
-    width: 200px;
+    width: 250px;
     height: 2.5rem;
     padding: 5px;
-    margin: 15px;
+
     border-radius: 7px;
     border: 1px solid $cream;
     background-color: $primary-blue;

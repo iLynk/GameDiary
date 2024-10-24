@@ -15,7 +15,7 @@ document.querySelectorAll('.like, .dislike').forEach(button => {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    document.querySelector(`#review-score-${reviewId}`).textContent = data.score;
+                    document.querySelector(`#review-score-${reviewId}`).textContent = 'Appréciation : ' + data.score;
                     updateVoteButtons(this, type, data.toggle); // Ajouter une information pour gérer le toggle
                 } else {
                     alert(data.error);

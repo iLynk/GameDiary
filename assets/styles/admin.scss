@@ -33,7 +33,7 @@ body {
   div.game_buttons {
     width: 250px;
     display: flex;
-    margin-left: 10px;
+    margin: auto;
     flex-direction: column;
 
     button {
@@ -71,10 +71,38 @@ body {
   .moderation {
     display: flex;
     flex-direction: column;
-    width: 90%;
+    width: 80%;
     margin: auto;
     text-align: left;
 
+    h3{
+      text-align: center;
+    }
+
+    .userlist{
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      div{
+        margin: 6px;
+        width: 250px;
+      }
+    }
+
+    .reviewList{
+      h4{
+        text-align: center;
+      }
+      .flex{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        div{
+            margin: 6px;
+            width: 350px;
+        }
+      }
+    }
     .user,
     .review{
       border: 1px solid $cream;
@@ -87,6 +115,8 @@ body {
       }
     }
     span {
+      word-break: break-word; // Gère les longs mots qui dépasseraient de la zone
+      white-space: normal;
       color: white;
     }
     button {

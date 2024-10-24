@@ -114,14 +114,16 @@ body {
 
   #reviews-list {
     padding: 0 7px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 
-    @media (min-width: 768px) {
-      width: 40%;
-      margin: auto;
-      padding: 10px;
+    .flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      div {
+        margin: 6px;
+        width: 250px;
+      }
     }
 
     .review {
@@ -138,12 +140,11 @@ body {
       }
 
       p {
-
-      span{
-        color: white;
-        word-break: break-word; // Gère les longs mots qui dépasseraient de la zone
-        white-space: normal; // Permet le retour à la ligne pour les textes longs
-      }
+        span {
+          color: white;
+          word-break: break-word; // Gère les longs mots qui dépasseraient de la zone
+          white-space: normal; // Permet le retour à la ligne pour les textes longs
+        }
       }
 
       button {
