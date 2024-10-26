@@ -1,4 +1,5 @@
 <?php
+// Dans ce controller, on trouve les routes liées aux jeux, celle classique et la route d'un jeu en particulier
 
 // src/Controller/GameController.php
 namespace App\Controller;

@@ -32,16 +32,16 @@ class UserFixtures extends Fixture
         $user->setPassword($hashedPassword);
         $manager->persist($user);
 
-        // ROLE MODERATEUR
+        // ROLE UTILISATEUR
         $user = new User();
         $user->setName('Salome')
             ->setEmail('salome@gmail.com')
-            ->setRoles(['ROLE_MODERATOR'])
+            ->setRoles(['ROLE_USER'])
             ->setCreatedAt(new \DateTimeImmutable())
             ->setUpdatedAt(new \DateTimeImmutable());
 
         // Hacher le mot de passe
-        $hashedPassword = $this->passwordHasher->hashPassword($user, 'SuperModerator123!@');
+        $hashedPassword = $this->passwordHasher->hashPassword($user, 'SuperUser123!@');
         $user->setPassword($hashedPassword);
         $manager->persist($user);
 

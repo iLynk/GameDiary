@@ -62,7 +62,7 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
-            'is_edit' => false, // Par défaut, ce n'est pas une édition
+            'is_edit' => false,
             'is_password' => false
         ]);
     }

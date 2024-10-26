@@ -1,4 +1,5 @@
 <?php
+// Ce controller est utilisé pour tout ce qui est lié au avis (ajout, modifs, suppression, like/dislike)
 
 namespace App\Controller;
 
@@ -78,6 +79,7 @@ class ReviewController extends AbstractController
 
     #[Route('review/edit/{id}', name: 'app_review_edit', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_USER")]
+    // FONCTION POUR MODIFIER UN AVIS
     public function editReview(#[MapEntity(mapping: ['id' => 'id'])] Review $review, Request $request, EntityManagerInterface $entityManager, ReviewRepository $reviewRepository): Response
     {
         $review = $reviewRepository->findOneBy(['id' => $review->getId()]);
@@ -102,6 +104,7 @@ class ReviewController extends AbstractController
 
     #[Route('/review/delete/{id}', name: 'app_review_delete', methods: ['POST'])]
     #[IsGranted("ROLE_USER")]
+    // FONCTION POUR SUPPRIMER UN AVIS
     public function delete(#[MapEntity(mapping: ['id' => 'id'])] Review $review, ReviewRepository $reviewRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
         $review = $reviewRepository->findOneBy(['id' => $review->getid()]);
@@ -118,6 +121,7 @@ class ReviewController extends AbstractController
     }
 
     #[Route('/vote/{id}/{type}', name: 'vote_review', methods: ['POST'])]
+    // FONCTION POUR AJOUTER UN LIKE / DISLIKE A UN AVIS
     public function vote(Review $review, int $type, EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         $user = $this->getUser();

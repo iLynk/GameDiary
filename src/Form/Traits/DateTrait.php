@@ -1,4 +1,5 @@
 <?php
+// Petit trait servant à créer les created_at / updated_at
 
 namespace App\Form\Traits;
 

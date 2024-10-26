@@ -75,36 +75,40 @@ body {
     margin: auto;
     text-align: left;
 
-    h3{
+    h3 {
       text-align: center;
     }
 
-    .userlist{
+    .userlist {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      div{
+
+      div {
         margin: 6px;
         width: 250px;
       }
     }
 
-    .reviewList{
-      h4{
+    .reviewList {
+      h4 {
         text-align: center;
       }
-      .flex{
+
+      .flex {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        div{
-            margin: 6px;
-            width: 350px;
+
+        div {
+          margin: 6px;
+          width: 350px;
         }
       }
     }
+
     .user,
-    .review{
+    .review {
       background-color: #0104143b;
       border: 1px solid $cream;
       border-radius: 10px;
@@ -115,15 +119,18 @@ body {
         text-align: right;
       }
     }
+
     span {
       word-break: break-word; // Gère les longs mots qui dépasseraient de la zone
       white-space: normal;
       color: white;
     }
+
     button {
       background-color: transparent;
       border: none;
       text-align: right;
+
       svg {
         color: #983333;
       }

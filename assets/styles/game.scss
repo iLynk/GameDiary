@@ -5,7 +5,8 @@ body {
     background-color: transparent;
     border: none;
   }
-  button.liked{
+
+  button.liked {
     svg {
       color: #7aa0c4;
     }
@@ -17,11 +18,12 @@ body {
 
   }
 
-  button.disliked{
+  button.disliked {
     svg {
       color: #d25b5b;
     }
   }
+
   .categories-list {
     display: flex;
     flex-wrap: wrap;
@@ -53,28 +55,31 @@ body {
     text-transform: uppercase;
     font-weight: bold;
   }
+
   .category:hover,
-  .reset-category-filter:hover{
+  .reset-category-filter:hover {
     background-color: #2d345b;
     color: white;
   }
-.search-filter{
-  display: flex;
-  justify-content: left;
 
-  width: 86%;
-  margin: 15px auto;
-  #search-game{
-    width: 250px;
-    height: 2.5rem;
-    padding: 5px;
+  .search-filter {
+    display: flex;
+    justify-content: left;
 
-    border-radius: 7px;
-    border: 1px solid $cream;
-    background-color: $primary-blue;
-    color: $cream;
+    width: 86%;
+    margin: 15px auto;
 
+    #search-game {
+      width: 250px;
+      height: 2.5rem;
+      padding: 5px;
+
+      border-radius: 7px;
+      border: 1px solid $cream;
+      background-color: $primary-blue;
+      color: $cream;
+
+    }
   }
-}
 
 }

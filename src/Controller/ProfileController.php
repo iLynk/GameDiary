@@ -1,4 +1,5 @@
 <?php
+// Ce controller est utilisé pour tout ce qui est relatif au profil de l'utilisateur (affichage, modifs et suppression)
 
 namespace App\Controller;
 
@@ -22,6 +23,7 @@ class ProfileController extends AbstractController
 
     #[Route('/profile', name: 'app_profile', methods: ['GET'])]
     #[IsGranted("ROLE_USER")]
+    // seulement l'affichage du profil avec diverses informations comme les avis et la liste
     public function index(User $user, UserListRepository $userListRepository): Response
     {
         $user = $this->getUser();
@@ -36,6 +38,7 @@ class ProfileController extends AbstractController
 
     #[Route('/profile/edit', name: 'app_profile_edit', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_USER")]
+    // fonction pour modifier les informations hors mot de passe qui se passe dans une autre route
     public function edit(EntityManagerInterface $entityManager, Request $request,): Response
     {
         // Récupérer l'utilisateur connecté
@@ -77,6 +80,7 @@ class ProfileController extends AbstractController
 
     #[Route('/profile/editPassword', name: 'app_profile_edit_password', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_USER")]
+    // fonction pour modifier uniquement le mot de passe, je trouvais ça plus clair de séparer les informations "classiques" du mot de passe
     public function editPassword(EntityManagerInterface $entityManager, Request $request, UserPasswordHasherInterface $hasher): Response
     {
         // Récupérer l'utilisateur connecté
@@ -115,6 +119,7 @@ class ProfileController extends AbstractController
 
     #[Route('/profile/delete/{id}', name: 'app_profile_delete', methods: ['POST'])]
     #[IsGranted("ROLE_USER")]
+    // route pour supprimer un compte (c'est la même pour l'admin qui delete un compte et un user qui delete son compte)
     public function delete(#[MapEntity(mapping: ['id' => 'id'])] User $user,UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request, TokenStorageInterface $tokenStorage): Response
     {
         $review = $userRepository->findOneBy(['id' => $user->getId()]);
@@ -124,6 +129,7 @@ class ProfileController extends AbstractController
             $tokenStorage->setToken(null); // Supprimer le token de session
             $request->getSession()->invalidate(); // Invalider la session
         }
+        // sert à rediriger correctement en fonction d'ou vient la requête
         $referer = $request->headers->get('referer');
         if($referer && str_contains($referer, "/admin")) {
             return $this->redirectToRoute('admin_dashboard');

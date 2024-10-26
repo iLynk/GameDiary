@@ -1,3 +1,5 @@
+// Ce script est la pour gérer l'affichage dynamique des étoiles pour les notations, un peu comme un avis google
+
 const stars = document.querySelectorAll('.star');
 const ratingInput = document.querySelector('input[name="review[rate]"]');
 function updateStarSelection(rating) {

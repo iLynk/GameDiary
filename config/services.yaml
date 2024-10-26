@@ -2,6 +2,7 @@
 # Files in the packages/ subdirectory configure your dependencies.
 
 # Put parameters here that don't need to change on each machine where the app is deployed
+# Paramètres nécessaires pour les requêtes API
 parameters:
   igdb_client_id: '%env(IGDB_CLIENT_ID)%'
   igdb_client_secret: '%env(IGDB_CLIENT_SECRET)%'

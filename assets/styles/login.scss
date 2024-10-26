@@ -2,9 +2,10 @@
 
 body {
 
-  h1{
+  h1 {
     font-size: 2rem;
   }
+
   background-color: $primary-blue;
   color: $cream;
   font-family: $font-family-game;
@@ -48,7 +49,8 @@ input[type="password"] {
   color: #fff;
   font-size: 0.9rem;
 }
-input:focus{
+
+input:focus {
   background-color: rgba($rink, 0.45);
 }
 

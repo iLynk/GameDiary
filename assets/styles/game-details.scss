@@ -54,7 +54,6 @@ body {
         border: none;
       }
     }
-
   }
 
   .game-rate {
@@ -69,6 +68,7 @@ body {
       margin-top: 10px;
       border: 2px solid white;
       border-radius: 10px;
+      cursor: pointer;
 
       &:hover {
         background-color: $secondary-blue;
@@ -122,12 +122,14 @@ body {
 
       div {
         width: 250px;
-        p{
+
+        p {
           margin: 8px;
 
         }
       }
     }
+
     .review {
       background-color: #0104143b;
       border: 1px solid white;

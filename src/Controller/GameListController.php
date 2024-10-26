@@ -1,4 +1,5 @@
 <?php
+// Ce controller est utilisé pour tout ce qui est en lien avec la liste de "favoris", deux routes seulement, add et delete
 
 // src/Controller/GameListController.php
 namespace App\Controller;

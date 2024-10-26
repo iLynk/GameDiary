@@ -7,7 +7,6 @@ Encore
     .setPublicPath('/build')
     // Ajouter des fichiers d'entrée (JS ou CSS/SCSS)
     .addEntry('admin', './assets/js/admin.js')
-    .addEntry('app', './assets/js/app.js')
     .addEntry('dynamicFilter', './assets/js/dynamicFilter.js')
     .addEntry('formValidator', './assets/js/formValidator.js')
     .addEntry('main', './assets/js/main.js')
@@ -23,7 +22,6 @@ Encore
     .addStyleEntry('game_styles', './assets/styles/game.scss')
     .addStyleEntry('game_styles_details', './assets/styles/game-details.scss')
     .addStyleEntry('profile', './assets/styles/profile.scss')
-    .addStyleEntry('home', './assets/styles/home.scss')
     .addStyleEntry('mentions', './assets/styles/mentions-legales.scss')
 
     // Configurer les options de surveillance pour Webpack Watcher

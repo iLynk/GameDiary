@@ -1,4 +1,5 @@
 // assets/js/admin.js
+// Ce script sert à gérer les requêtes API disponibles dans le dashboard Admin
 
 const loader = document.querySelector('.loader > img')
 const loaderP = document.querySelector('.loader > p')
@@ -17,7 +18,7 @@ function sendPostRequest(url) {
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-Token': csrfToken // Ajout du token CSRF
+            'X-CSRF-Token': csrfToken
         }
     }).then(response => {
         if (response.ok) {

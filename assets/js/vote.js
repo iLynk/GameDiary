@@ -1,3 +1,5 @@
+// Ce script gère toute la partie de like / dislike sur les avis
+
 document.querySelectorAll('.like, .dislike').forEach(button => {
     button.addEventListener('click', function() {
         const reviewId = this.getAttribute('data-id');
@@ -25,6 +27,7 @@ document.querySelectorAll('.like, .dislike').forEach(button => {
     });
 });
 
+// fonction pour rajouter la classe css en fonction de si on a like / dislike
 function updateVoteButtons(button, voteType, toggle) {
     const reviewElement = button.closest('.review'); // Récupère l'élément parent de la review
     const likeButton = reviewElement.querySelector('.like');

@@ -1,4 +1,5 @@
 <?php
+// Controller crée automatiquement avec le make:auth, la route register a été cependant modifiée
 
 namespace App\Controller;
 
@@ -19,6 +20,7 @@ class SecurityController extends AbstractController
 {
 
     #[Route(path: '/register', name: 'app_register')]
+    // FONCTION POUR S'INSCRIRE
     public function register(
         Request $request,
         EntityManagerInterface $em,
@@ -58,6 +60,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/login', name: 'app_login')]
+    // FONCTION POUR SE CONNECTER
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // si l'utilisateur est connecté, on le renvoit vers la page d'accueil
@@ -77,6 +80,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
+    // FONCTION POUR SE DECONNECTER
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');

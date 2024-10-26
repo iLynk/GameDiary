@@ -1,5 +1,8 @@
 <?php
-
+/* Bienvenue dans l'api controller, le plus gros controller de l'application, vous allez retrouver ici les fonctions faisant appel à l'API IGDB
+   Donc, la route pour récupérer les jeux, les catégories, les plateformes, les images ... ...
+   Bref, je vous laisse faire un tour ! J'ai essayé de tout commenter pour que ce soit le plus lisible possible, bonne balade :) !
+*/
 namespace App\Controller;
 
 use App\Entity\Game;
@@ -26,10 +29,6 @@ use Symfony\Contracts\HttpClient\Exception\{ClientExceptionInterface,
     TransportExceptionInterface
 };
 
-/* Bienvenue dans l'api controller, le plus gros controller de l'application, vous allez retrouver ici les fonctions faisant appel à l'API IGDB
-   Donc, la route pour récupérer les jeux, les catégories, les plateformes, les images ... ...
-   Bref, je vous laisse faire un tour ! J'ai essayé de tout commenter pour que ce soit le plus lisible possible, bonne balade :) !
-*/
 
 class ApiController extends AbstractController
 {
@@ -70,6 +69,7 @@ class ApiController extends AbstractController
         Request                $request,
     ): JsonResponse
     {
+        // On vérifie le token CSRF
         if (!$this->csrfTokenManager->isTokenValid(new CsrfToken('api_actions', $request->headers->get('X-CSRF-Token')))) {
             return new JsonResponse(['error' => 'Token CSRF invalide.'], 403);
         }

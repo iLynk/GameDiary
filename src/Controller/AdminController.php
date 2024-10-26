@@ -1,5 +1,5 @@
 <?php
-
+// Ce controller gère simplement la page admin dans laquelle j'envoie les reviews et les users pour la suppression
 // src/Controller/AdminController.php
 namespace App\Controller;
 
