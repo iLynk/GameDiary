@@ -22,13 +22,14 @@ class SecurityController extends AbstractController
     #[Route(path: '/register', name: 'app_register')]
     // FONCTION POUR S'INSCRIRE
     public function register(
-        Request $request,
-        EntityManagerInterface $em,
-        User $user,
+        Request                     $request,
+        EntityManagerInterface      $em,
+        User                        $user,
         UserPasswordHasherInterface $hasher,
-        UserAuthenticatorInterface $userAuthenticator,
-        AppAuthenticator $authenticator,
-    ): Response {
+        UserAuthenticatorInterface  $userAuthenticator,
+        AppAuthenticator            $authenticator,
+    ): Response
+    {
         // si l'utilisateur est connecté, on le renvoit vers la page d'accueil
         if ($this->getUser()) {
             return $this->redirectToRoute('app_home');
@@ -38,6 +39,11 @@ class SecurityController extends AbstractController
         // on récupère la reponse envoyé depuis le navigateur
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            if (!$form->get('recaptcha')->isValid()) {
+                $this->addFlash('danger', 'La validation reCAPTCHA a échoué, veuillez réessayer.');
+                return $this->redirectToRoute('app_register');
+            }
             // on hache le password et on ajoute le role user
             $user->setPassword($hasher->hashPassword($user, $user->getPassword()))
                 ->setRoles(['ROLE_USER']);

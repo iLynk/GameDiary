@@ -1,0 +1,24 @@
+{# templates/bundles/TwigBundle/Exception/error404.html.twig #}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('build/404scss.css') }}">
+{% endblock %}
+{% block body %}
+    <!--Square-->
+    <div class="Square404" id="Square">
+        <div class="Square">
+            <!--404 inside the square-->
+            <h1>404</h1>
+        </div>
+    </div>
+
+    <!--Texts-->
+    <div class="texts">
+        <h4>Oups! la page n'a pas été trouvée</h4>
+        <p>La page que vous recherchez n'existe pas. Retournez à la page principale.</p>
+        <a href="{{ path('app_home') }}">Retour à l'accueil</a>
+    </div>
+
+    {% block javascripts %}
+        <script src="{{ asset('build/404js.js') }}"></script>
+    {% endblock %}
+{% endblock %}

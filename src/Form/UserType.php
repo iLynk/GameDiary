@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use App\Form\Traits\DateTrait;
+use Karser\Recaptcha3Bundle\Form\Recaptcha3Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -51,6 +52,10 @@ class UserType extends AbstractType
                 ),
             ])
             ->add('submit', SubmitType::class, ['label' => $options['is_edit'] || $options['is_password'] ? 'Mettre à jour' : 'S\'inscrire',
+            ])
+            ->add('recaptcha', Recaptcha3Type::class, [
+                'action_name' => 'registration',
+                'mapped' => false,
             ])
             // utilisation de l'event POST_SUBMIT pour avoir déjà l'entité User "crée"
             ->addEventListener(FormEvents::POST_SUBMIT, $this->dateTrait());

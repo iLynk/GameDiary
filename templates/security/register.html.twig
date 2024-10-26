@@ -9,4 +9,9 @@
     {{ form_start(form) }}
     <h1 class="h3 mb-3 font-weight-normal">Inscrivez-vous </h1>
     {{ form_end(form) }}
+
+    {% block javascripts %}
+        <script src="https://www.google.com/recaptcha/api.js?render=6LfpDW0qAAAAAEBP3_R2TRSQACfj53w2tXD6gMhj"></script>
+        <script src="{{ asset('js/recaptcha.js') }}"></script>
+    {% endblock %}
 {% endblock %}

@@ -13,6 +13,8 @@ Encore
     .addEntry('rateForm', './assets/js/rateForm.js')
     .addEntry('stars', './assets/js/stars.js')
     .addEntry('vote', './assets/js/vote.js')
+    .addEntry('404js', './assets/js/404js.js')
+    .addEntry('recaptcha', './assets/js/recaptcha.js')
     // Correction : Nom unique pour chaque fichier CSS généré
     .addStyleEntry('app_styles', './assets/styles/app.scss')
     .addStyleEntry('admin_styles', './assets/styles/admin.scss')
@@ -23,6 +25,8 @@ Encore
     .addStyleEntry('game_styles_details', './assets/styles/game-details.scss')
     .addStyleEntry('profile', './assets/styles/profile.scss')
     .addStyleEntry('mentions', './assets/styles/mentions-legales.scss')
+    .addStyleEntry('404scss', './assets/styles/404scss.scss')
+    .addStyleEntry('503scss', './assets/styles/503scss.scss')
 
     // Configurer les options de surveillance pour Webpack Watcher
     .configureWatchOptions(function(watchOptions) {
