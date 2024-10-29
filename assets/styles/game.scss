@@ -1,4 +1,4 @@
-@import 'variables.scss';
+@import "variables.scss";
 
 body {
   button.like {
@@ -15,7 +15,6 @@ body {
   button.dislike {
     border: none;
     background-color: transparent;
-
   }
 
   button.disliked {
@@ -42,7 +41,6 @@ body {
       border: 1px solid transparent;
       border-radius: 15px;
     }
-
   }
 
   .reset-category-filter {
@@ -78,8 +76,6 @@ body {
       border: 1px solid $cream;
       background-color: $primary-blue;
       color: $cream;
-
     }
   }
-
 }

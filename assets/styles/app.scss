@@ -1,4 +1,4 @@
-@import '_variables.scss';
+@import "_variables.scss";
 
 body {
   text-align: center;
@@ -6,8 +6,16 @@ body {
   h1 {
     font-size: 5rem;
   }
-  .grecaptcha-badge{
-    transform: scale(0.8) ;
+  .grecaptcha-badge {
+    transform: scale(0.8);
+  }
+
+  .hello {
+    font-size: 2.5rem;
+    span {
+      color: white;
+      font-weight: bold;
+    }
   }
   h2 {
     font-size: 2rem;
@@ -16,7 +24,8 @@ body {
     margin: 0 auto;
   }
 
-  h3, h4 {
+  h3,
+  h4 {
     font-size: 1.7rem;
     text-transform: uppercase;
   }
@@ -99,7 +108,7 @@ body {
         color: $rink;
 
         &:hover {
-          color: white
+          color: white;
         }
       }
     }
@@ -119,15 +128,16 @@ body {
   }
 
   .alert-danger {
-    color: #fc8888;
+    color: white;
+    background-color: #9e2033;
   }
 
   .alert-info {
-    color: #da9240;
+    color: white;
   }
 
   .alert-success {
-    color: #80b080;
+    color: white;
   }
 
   .reviews {
@@ -139,7 +149,7 @@ body {
     .review {
       background-color: #0104143b;
       border: 1px solid $cream;
-      padding: 20px 0;
+      padding: 20px 10px;
       margin: 5px;
       width: 350px;
 
@@ -172,7 +182,6 @@ body {
       button.dislike {
         border: none;
         background-color: transparent;
-
       }
 
       button.disliked {
@@ -210,8 +219,6 @@ body {
 
 @media screen and (max-width: 1024px) {
   body {
-
-
     h1 {
       font-size: 2rem;
     }
@@ -232,7 +239,5 @@ body {
     h4 {
       font-size: 1.2rem;
     }
-
-
   }
 }

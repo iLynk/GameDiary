@@ -8,6 +8,7 @@
 {% block body %}
     {{ form_start(form) }}
     <h1 class="h3 mb-3 font-weight-normal">Inscrivez-vous </h1>
+     {% include '/_partials/_flashes.html.twig' %}
     {{ form_end(form) }}
 
     {% block javascripts %}

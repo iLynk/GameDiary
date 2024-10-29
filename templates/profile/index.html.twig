@@ -40,6 +40,8 @@
                     {% else %}
                         <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
                     {% endif %}
+                    <p>Appréciation : {{review.score}}</p>
+                        <p><em>Rédigé le : {{review.updatedAt|date('d-m-Y')}}</em></p>
                     <a href="{{ path('app_review_edit', {'id': review.id}) }}"><p>Modifier votre avis
                             ? {{ ux_icon('hugeicons:note-edit') }}</p></a>
                     <form class="delete-form" method="post" action="{{ path('app_review_delete', {'id': review.id}) }}"

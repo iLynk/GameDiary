@@ -1,79 +1,97 @@
 {% extends 'base.html.twig' %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('build/admin_styles.css') }}">
+	<link rel="stylesheet" href="{{ asset('build/admin_styles.css') }}">
 {% endblock %}
 {% block body %}
-    <h1>Admin - Game Diary</h1>
+	<h1>Admin - Game Diary</h1>
 
-    <h2>Votre boite à outils API :</h2>
-    <div class="game_buttons">
-        <button onclick="sendPostRequest('{{ path('api_get_categories') }}')">Récupérer les catégories</button>
-        <button onclick="sendPostRequest('{{ path('api_get_platforms') }}')">Récupérer les plateformes</button>
-        <button onclick="sendPostRequest('{{ path('api_get_games') }}')">Récupérer les jeux</button>
-        <button onclick="sendPostRequest('{{ path('api_get_covers') }}')">Récupérer les artworks (peut être un peu
-            long !)
-        </button>
-        <input type="hidden" id="csrf-token" value="{{ csrf_token('api_actions') }}">
-    </div>
-    <div class="loader">
-        <img src="images/loader.gif" alt="image de chargement" class="not-visible">
-        <p class="not-visible">La requête est en cours, veuillez patienter !</p>
-    </div>
-    <div class="success-message not-visible">
-        <p>Les éléments ont correctement été récupérés !</p>
-    </div>
-    <p>{{ ux_icon('ci:circle-warning') }} l'ordre des requêtes a son importance <em>(vous ne pouvez pas charger les jeux
-            avant d'avoir chargé les catégories/plateformes)</em></p>
+	<h2>Votre boite à outils API :</h2>
+	<div class="game_buttons">
+		<button onclick="sendPostRequest('{{ path('api_get_categories') }}')">Récupérer les catégories</button>
+		<button onclick="sendPostRequest('{{ path('api_get_platforms') }}')">Récupérer les plateformes</button>
+		<button onclick="sendPostRequest('{{ path('api_get_games') }}')">Récupérer les jeux</button>
+		<button onclick="sendPostRequest('{{ path('api_get_covers') }}')">Récupérer les artworks (peut être un peu
+			            long !)
+		</button>
+		<input type="hidden" id="csrf-token" value="{{ csrf_token('api_actions') }}">
+	</div>
+	<div class="loader">
+		<img src="images/loader.gif" alt="image de chargement" class="not-visible">
+		<p class="not-visible">La requête est en cours, veuillez patienter !</p>
+	</div>
+	<div class="success-message not-visible">
+		<p>Les éléments ont correctement été récupérés !</p>
+	</div>
+	<p>{{ ux_icon('ci:circle-warning') }}
+		l'ordre des requêtes a son importance
+		<em>(vous ne pouvez pas charger les jeux
+			            avant d'avoir chargé les catégories/plateformes)</em>
+	</p>
 
-    <div class="moderation">
-        <h3>Bannir un utilisateur ?</h3>
-        <div class="userlist">
-            {% for user in users %}
-                <div class="user">
-                    <p>Nom : <span>{{ user.name }}</span></p>
-                    <p>Mail : <span>{{ user.email }}</span></p>
-                    <form class="delete-form" method="post" action="{{ path('app_profile_delete', {'id': user.id}) }}"
-                          onsubmit="return confirm('Voulez vous vraiment supprimer ce compte ?');">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+	<div class="moderation">
+		<h3>Bannir un utilisateur ?</h3>
+		<div class="userlist">
+			{% for user in users %}
+				<div class="user">
+					<p>Nom :
+						<span>{{ user.name }}</span>
+					</p>
+					<p>Mail :
+						<span>{{ user.email }}</span>
+					</p>
+					<form class="delete-form" method="post" action="{{ path('app_profile_delete', {'id': user.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce compte ?');">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
 
-                        <button class="delete">{{ ux_icon('fa6-solid:trash-can') }}</button>
-                    </form>
-                </div>
+						<button class="delete">{{ ux_icon('fa6-solid:trash-can') }}</button>
+					</form>
+				</div>
 
-            {% endfor %}
-        </div>
-        <div class="reviewList">
-            <h4>Supprimer un avis publié ?</h4>
+			{% endfor %}
+		</div>
+		<div class="reviewList">
+			<h4>Supprimer un avis publié ?</h4>
 
-            <div class="flex">
-                {% for review in reviews %}
-                    <div class="review">
-                        <p>Avis de <span>{{ review.user.name }}</span></p>
-                        <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
-                        <p>Jeu : <span>{{ review.game.name }}</span></p>
-                        <p>Note : <span>{{ review.rate }}★/5</span></p>
-                        {% if review.comment %}
-                            <p>Commentaire : <span>{{ review.comment }}</span></p>
-                        {% endif %}
-                        {% if review.completed != 0 %}
-                            <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
-                        {% else %}
-                            <p>Jeu non terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
-                        {% endif %}
-                        <form class="delete-form" method="post"
-                              action="{{ path('app_review_delete', {'id': review.id}) }}"
-                              onsubmit="return confirm('Voulez vous vraiment supprimer cet avis ?');">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
+			<div class="flex">
+				{% for review in reviews %}
+					<div class="review">
+						<p>Avis de
+							<span>{{ review.user.name }}</span>
+						</p>
+						<a href="{{ path('app_game_show', {'slug': review.game.slug}) }}">
+							<img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
+						</a>
+						<p>Jeu :
+							<span>{{ review.game.name }}</span>
+						</p>
+						<p>Note :
+							<span>{{ review.rate }}★/5</span>
+						</p>
+						{% if review.comment %}
+							<p>Commentaire :
+								<span>{{ review.comment }}</span>
+							</p>
+						{% endif %}
+						{% if review.completed != 0 %}
+							<p>Jeu terminé
+								{{ ux_icon('solar:cup-star-bold') }}</p>
+						{% else %}
+							<p>Jeu non terminé
+								{{ ux_icon('fluent:trophy-off-20-regular') }}</p>
+						{% endif %}
+                        <p>Appréciation : {{review.score}}</p>
+                        <p><em>Rédigé le : {{review.updatedAt|date('d-m-Y')}}</em></p>
+						<form class="delete-form" method="post" action="{{ path('app_review_delete', {'id': review.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer cet avis ?');">
+							<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
 
-                            <button class="btn">{{ ux_icon('fa6-solid:trash-can') }}</button>
-                        </form>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
+							<button class="btn">{{ ux_icon('fa6-solid:trash-can') }}</button>
+						</form>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset('build/admin.js') }}"></script>
+	<script src="{{ asset('build/admin.js') }}"></script>
 {% endblock %}

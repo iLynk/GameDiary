@@ -52,7 +52,8 @@
                     <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
                 {% endif %}
                 <div class="review-vote">
-                    <p><span id="review-score-{{ review.id }}"><span class="cream">Appréciation :</span> {{ review.getScore() }}</span></p>
+                    <p><span id="review-score-{{ review.id }}">Appréciation : {{ review.getScore() }}</span></p>
+                        <p><em>Rédigé le : {{review.updatedAt|date('d-m-Y')}}</em></p>
                     {% if app.user %}
                         {% if app.user != review.user %}
                             <button class="like {{ review.likedByUser ? 'liked' : '' }}"
