@@ -5,10 +5,13 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          backupGlobals="false"
          colors="true"
-         bootstrap="tests/bootstrap.php"
          convertDeprecationsToExceptions="false"
 >
     <php>
+        <env name="KERNEL_CLASS" value="App\Kernel" />
+        <env name="APP_ENV" value="test" />
+        <env name="APP_SECRET" value="$ecretf0rt3st" />
+        <env name="DATABASE_URL" value="mysql://root:@127.0.0.1:3306/gamediary?serverVersion=8.0.31&amp;charset=utf8mb4" />
         <ini name="display_errors" value="1" />
         <ini name="error_reporting" value="-1" />
         <server name="APP_ENV" value="test" force="true" />
