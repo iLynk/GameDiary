@@ -56,6 +56,13 @@ class ProfileController extends AbstractController
             }
             if (!empty($form->get('email')->getData())) {
                 $user->setEmail($form->get('email')->getData());
+
+                $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
+                if($existingUser) {
+                    // on ajoute un petit message pour dire à l'utilisateur que le compte existe déjà, mais on donne une information pour un potentiel hacker....
+                    $this->addFlash('danger', "On ne se connaît pas déjà ?");
+                    return $this->redirectToRoute('app_profile_edit');
+                }
             }
 
             $user->setpassword($user->getPassword());

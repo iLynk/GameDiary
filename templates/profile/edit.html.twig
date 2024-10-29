@@ -9,6 +9,7 @@
     <h1 class="h3 mb-3 font-weight-normal">Modifier vos informations </h1>
     <div class="user-form">
         {{ form_start(form) }}
+        {% include '/_partials/_flashes.html.twig' %}
         {{ form_end(form) }}
     </div>
     <form class="delete-form" method="post" action="{{ path('app_profile_delete', {'id': user.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer votre compte ?');">

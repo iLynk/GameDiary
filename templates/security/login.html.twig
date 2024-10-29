@@ -10,11 +10,7 @@
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
-    {% if app.flashes('rate_limit') %}
-        <div class="alert alert-danger">
-            {{ app.flashes('rate_limit') }}
-        </div>
-    {% endif %}
+    {% include '/_partials/_flashes.html.twig' %}
 
 
     <h1>Connectez-vous </h1>
