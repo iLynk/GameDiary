@@ -40,10 +40,19 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
+            // Vérification que l'user n'existe pas déjà
+            $existingUser = $em->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
+            if($existingUser) {
+                // on ajoute un petit message pour dire à l'utilisateur que le compte existe déjà, mais on donne une information pour un potentiel hacker....
+                $this->addFlash('danger', "On ne se connaît pas déjà ?");
+                return $this->redirectToRoute('app_register');
+            }
+            
             if (!$form->get('recaptcha')->isValid()) {
                 $this->addFlash('danger', 'La validation reCAPTCHA a échoué, veuillez réessayer.');
                 return $this->redirectToRoute('app_register');
             }
+            
             // on hache le password et on ajoute le role user
             $user->setPassword($hasher->hashPassword($user, $user->getPassword()))
                 ->setRoles(['ROLE_USER']);
