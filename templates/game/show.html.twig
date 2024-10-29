@@ -69,6 +69,7 @@
             <div class="flex">
                 {% for review in reviews %}
                 <div class="review">
+                    <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
                     <p>Nom : <span>{{ review.user.name }}</span></p>
                     <p>Note : <span>{{ review.rate }}★</span></p>
 
