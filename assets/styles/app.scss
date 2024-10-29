@@ -1,4 +1,4 @@
-@import "_variables.scss";
+@import '_variables.scss';
 
 body {
   text-align: center;
@@ -6,13 +6,13 @@ body {
   h1 {
     font-size: 5rem;
   }
-  .grecaptcha-badge {
-    transform: scale(0.8);
+  .grecaptcha-badge{
+    transform: scale(0.8) ;
   }
 
-  .hello {
+  .hello{
     font-size: 2.5rem;
-    span {
+    span{
       color: white;
       font-weight: bold;
     }
@@ -24,8 +24,7 @@ body {
     margin: 0 auto;
   }
 
-  h3,
-  h4 {
+  h3, h4 {
     font-size: 1.7rem;
     text-transform: uppercase;
   }
@@ -108,7 +107,7 @@ body {
         color: $rink;
 
         &:hover {
-          color: white;
+          color: white
         }
       }
     }
@@ -129,7 +128,7 @@ body {
 
   .alert-danger {
     color: white;
-    background-color: #9e2033;
+    background-color: #9E2033;
   }
 
   .alert-info {
@@ -182,6 +181,7 @@ body {
       button.dislike {
         border: none;
         background-color: transparent;
+
       }
 
       button.disliked {
@@ -219,6 +219,8 @@ body {
 
 @media screen and (max-width: 1024px) {
   body {
+
+
     h1 {
       font-size: 2rem;
     }
@@ -239,5 +241,7 @@ body {
     h4 {
       font-size: 1.2rem;
     }
+
+
   }
 }
