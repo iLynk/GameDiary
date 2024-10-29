@@ -25,49 +25,56 @@
     <div id="reviews-list">
         <h2>Vos Avis</h2>
         <div class="flex">
-            {% for review in reviews %}
-                <div class="review">
-                    <a href="{{ path('app_game_show', {'slug': review.game.slug}) }}">
-                        <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
-                        <p>Jeu : <span>{{ review.game.name }}</span></p>
-                    </a>
-                    <p>Note : <span>{{ review.rate }}★/5</span></p>
-                    {% if review.comment %}
-                        <p>Commentaire : <span>{{ review.comment }}</span></p>
-                    {% endif %}
-                    {% if review.completed != 0 %}
-                        <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
-                    {% else %}
-                        <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
-                    {% endif %}
-                    <p>Appréciation : {{review.score}}</p>
-                        <p><em>Rédigé le : {{review.updatedAt|date('d-m-Y')}}</em></p>
-                    <a href="{{ path('app_review_edit', {'id': review.id}) }}"><p>Modifier votre avis
-                            ? {{ ux_icon('hugeicons:note-edit') }}</p></a>
-                    <form class="delete-form" method="post" action="{{ path('app_review_delete', {'id': review.id}) }}"
-                          onsubmit="return confirm('Voulez-vous vraiment supprimer cet avis ?');">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
-                        <button class="btn">{{ ux_icon('fa6-solid:trash-can') }}</button>
-                    </form>
-                </div>
-            {% endfor %}
+            {% if reviews %}
+                {% for review in reviews %}
+                    <div class="review">
+                        <a href="{{ path('app_game_show', {'slug': review.game.slug}) }}">
+                            <img src="{{ review.game.cover }}" alt="image de couverture du jeu {{ review.game.name }}">
+                            <p>Jeu : <span>{{ review.game.name }}</span></p>
+                        </a>
+                        <p>Note : <span>{{ review.rate }}★/5</span></p>
+                        {% if review.comment %}
+                            <p>Commentaire : <span>{{ review.comment }}</span></p>
+                        {% endif %}
+                        {% if review.completed != 0 %}
+                            <p>Jeu terminé {{ ux_icon('solar:cup-star-bold') }}</p>
+                        {% else %}
+                            <p>Jeu pas terminé {{ ux_icon('fluent:trophy-off-20-regular') }}</p>
+                        {% endif %}
+                        <p>Appréciation : {{ review.score }}</p>
+                        <p><em>Rédigé le : {{ review.updatedAt|date('d-m-Y') }}</em></p>
+                        <a href="{{ path('app_review_edit', {'id': review.id}) }}"><p>Modifier votre avis
+                                ? {{ ux_icon('hugeicons:note-edit') }}</p></a>
+                        <form class="delete-form" method="post"
+                              action="{{ path('app_review_delete', {'id': review.id}) }}"
+                              onsubmit="return confirm('Voulez-vous vraiment supprimer cet avis ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
+                            <button class="btn">{{ ux_icon('fa6-solid:trash-can') }}</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <p>Vous n'avez pas encore d'avis.</p>
+                {% endfor %}
+
+
+            {% endif %}
         </div>
     </div>
     <h3>Votre Liste</h3>
     <section class="favList">
         <div class="flex">
-        {% if userList %}
-            {% for game in userList.games %}
-                <div class="game">
-                    <a href="{{ path('app_game_show', {'slug': game.slug}) }}">
-                        <img src="{{ game.cover }}" alt="image de couverture du jeu {{ game.name }}">
-                        <p>{{ game.name }}</p>
-                    </a>
-                </div>
-            {% else %}
-                <p>Aucun jeu dans votre liste.</p>
-            {% endfor %}
-        {% endif %}
+            {% if userList %}
+                {% for game in userList.games %}
+                    <div class="game">
+                        <a href="{{ path('app_game_show', {'slug': game.slug}) }}">
+                            <img src="{{ game.cover }}" alt="image de couverture du jeu {{ game.name }}">
+                            <p>{{ game.name }}</p>
+                        </a>
+                    </div>
+                {% else %}
+                    <p>Aucun jeu dans votre liste.</p>
+                {% endfor %}
+            {% endif %}
         </div>
     </section>
 
